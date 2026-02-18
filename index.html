@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FLASH BAD BOYS - SINCRONIZACIÓN EN VIVO</title>
+    <title>FLASH FUTURE - Sistema Profesional de Flashcards</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', 'Poppins', sans-serif;
+            font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
         body {
             min-height: 100vh;
-            background: linear-gradient(135deg, #0a0f1e 0%, #0e1a2b 50%, #1a0f2e 100%);
+            background: #000000;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -23,105 +23,103 @@
             overflow-x: hidden;
         }
 
+        /* Efecto de grid futurista */
         body::before {
             content: '';
             position: absolute;
-            width: 200px;
-            height: 200px;
-            background: #ff00c1;
-            filter: blur(150px);
-            opacity: 0.3;
-            top: 10%;
-            left: 5%;
-            z-index: 0;
-            animation: neonMove 15s infinite alternate;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(255, 0, 127, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 0, 127, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
         }
 
+        /* Efecto de glow sutil */
         body::after {
             content: '';
             position: absolute;
-            width: 300px;
-            height: 300px;
-            background: #00f7ff;
-            filter: blur(180px);
-            opacity: 0.25;
-            bottom: 5%;
-            right: 5%;
-            z-index: 0;
-            animation: neonMove 20s infinite alternate-reverse;
-        }
-
-        @keyframes neonMove {
-            0% { transform: translate(0, 0) scale(1); opacity: 0.2; }
-            100% { transform: translate(50px, 50px) scale(1.5); opacity: 0.4; }
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #ff007f, #a6a6a6, #ff007f, transparent);
+            opacity: 0.3;
         }
 
         .container {
             width: 1600px;
             max-width: 100%;
-            background: rgba(10, 20, 30, 0.7);
-            backdrop-filter: blur(12px);
-            border: 2px solid;
-            border-image-slice: 1;
-            border-image-source: linear-gradient(45deg, #ff00c1, #00f7ff, #ffb800);
-            border-radius: 40px;
-            padding: 30px;
-            box-shadow: 0 0 40px rgba(255, 0, 193, 0.3), 0 0 80px rgba(0, 247, 255, 0.2);
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 0, 127, 0.2);
+            border-radius: 32px;
+            padding: 40px;
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.8),
+                0 0 0 1px rgba(255, 0, 127, 0.1),
+                inset 0 0 20px rgba(255, 0, 127, 0.05);
             z-index: 1;
             position: relative;
         }
 
+        /* Línea decorativa superior */
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #ff007f, #a6a6a6, #ff007f, transparent);
+            border-radius: 0 0 4px 4px;
+        }
+
         h1 {
-            font-size: 3.5rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 6px;
-            background: linear-gradient(45deg, #ff00c1, #00f7ff, #ffb800, #ff00c1);
-            background-size: 300% auto;
+            font-size: 3.2rem;
+            font-weight: 500;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, #ffffff 0%, #ff007f 50%, #a6a6a6 100%);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
             text-align: center;
-            margin-bottom: 20px;
-            text-shadow: 0 0 20px rgba(255, 0, 193, 0.5);
-            animation: gradient 4s linear infinite;
-        }
-
-        @keyframes gradient {
-            0% { background-position: 0% center; }
-            100% { background-position: 200% center; }
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            font-weight: 300;
         }
 
         .badge {
             display: inline-block;
-            background: rgba(0, 247, 255, 0.1);
-            border: 1px solid #00f7ff;
-            color: #00f7ff;
-            padding: 5px 15px;
-            border-radius: 50px;
-            font-size: 0.9rem;
+            background: rgba(255, 0, 127, 0.05);
+            border: 1px solid rgba(255, 0, 127, 0.2);
+            color: #a6a6a6;
+            padding: 8px 24px;
+            border-radius: 100px;
+            font-size: 0.85rem;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            box-shadow: 0 0 15px #00f7ff;
+            letter-spacing: 3px;
             margin-bottom: 20px;
+            backdrop-filter: blur(10px);
         }
 
         .sync-status {
-            background: rgba(0, 255, 0, 0.1);
-            border: 1px solid #00ff00;
-            color: #00ff00;
-            padding: 10px 20px;
-            border-radius: 50px;
+            background: rgba(255, 0, 127, 0.03);
+            border: 1px solid rgba(255, 0, 127, 0.2);
+            color: #ff007f;
+            padding: 8px 20px;
+            border-radius: 100px;
             display: inline-block;
             margin-bottom: 20px;
-            font-size: 0.9rem;
-            animation: pulse 2s infinite;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
         }
 
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.7; }
-            100% { opacity: 1; }
+        .sync-status.connected {
+            border-color: #ff007f;
+            box-shadow: 0 0 20px rgba(255, 0, 127, 0.1);
         }
 
         .creator-section {
@@ -129,103 +127,116 @@
             grid-template-columns: 1fr 1fr;
             gap: 30px;
             margin-bottom: 40px;
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 30px;
+            background: rgba(10, 10, 10, 0.6);
+            border-radius: 24px;
             padding: 30px;
-            border: 1px solid rgba(255, 0, 193, 0.3);
-            box-shadow: inset 0 0 50px rgba(255, 0, 193, 0.1), 0 0 30px rgba(0, 247, 255, 0.3);
+            border: 1px solid rgba(255, 0, 127, 0.1);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6);
         }
 
         .batch-upload-section {
-            background: rgba(255, 184, 0, 0.05);
-            border-radius: 30px;
+            background: rgba(10, 10, 10, 0.6);
+            border-radius: 24px;
             padding: 30px;
             margin-bottom: 40px;
-            border: 2px dashed #ffb800;
-            box-shadow: 0 0 30px rgba(255, 184, 0, 0.3);
+            border: 1px dashed rgba(166, 166, 166, 0.3);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6);
         }
 
         .upload-title {
-            color: #ffb800;
-            font-size: 1.8rem;
-            text-transform: uppercase;
-            letter-spacing: 3px;
+            color: #a6a6a6;
+            font-size: 1.4rem;
+            font-weight: 300;
+            letter-spacing: 2px;
             margin-bottom: 20px;
-            text-shadow: 0 0 15px #ffb800;
+            text-transform: uppercase;
             display: flex;
             align-items: center;
             gap: 15px;
         }
 
+        .upload-title span:first-child {
+            color: #ff007f;
+            font-weight: 400;
+        }
+
         .paste-area {
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.8);
             border-radius: 20px;
             padding: 25px;
             margin-bottom: 30px;
-            border: 2px solid #00f7ff;
+            border: 1px solid rgba(255, 0, 127, 0.2);
         }
 
         .paste-area h4 {
-            color: #00f7ff;
-            font-size: 1.3rem;
+            color: #ff007f;
+            font-size: 1.1rem;
+            font-weight: 300;
             margin-bottom: 15px;
             display: flex;
             align-items: center;
             gap: 10px;
+            letter-spacing: 1px;
         }
 
         .paste-textarea {
             width: 100%;
             min-height: 200px;
-            background: rgba(0, 0, 0, 0.5);
-            border: 2px solid #ff00c1;
-            border-radius: 15px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid rgba(166, 166, 166, 0.3);
+            border-radius: 16px;
             padding: 20px;
-            color: white;
-            font-size: 1rem;
-            font-family: monospace;
+            color: #ffffff;
+            font-size: 0.95rem;
+            font-family: 'Inter', monospace;
             margin-bottom: 15px;
+            transition: all 0.2s ease;
+            line-height: 1.6;
         }
 
         .paste-textarea:focus {
             outline: none;
-            box-shadow: 0 0 30px #ff00c1;
+            border-color: #ff007f;
+            box-shadow: 0 0 30px rgba(255, 0, 127, 0.1);
         }
 
         .format-example {
-            background: rgba(255, 0, 193, 0.1);
-            border-left: 4px solid #ff00c1;
-            padding: 15px;
+            background: rgba(255, 0, 127, 0.02);
+            border-left: 2px solid #ff007f;
+            padding: 15px 20px;
             margin: 15px 0;
-            border-radius: 10px;
-            color: #ccc;
-            font-family: monospace;
+            border-radius: 8px;
+            color: #a6a6a6;
+            font-family: 'Inter', monospace;
             white-space: pre-line;
+            font-size: 0.9rem;
+            line-height: 1.6;
         }
 
         .upload-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 20px;
         }
 
         .upload-card {
-            background: rgba(0, 0, 0, 0.6);
-            border: 1px solid #00f7ff;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(166, 166, 166, 0.2);
             border-radius: 20px;
             padding: 25px;
-            transition: all 0.3s;
+            transition: all 0.2s ease;
         }
 
         .upload-card:hover {
-            border-color: #ff00c1;
-            box-shadow: 0 0 30px #ff00c1;
-            transform: translateY(-5px);
+            border-color: #ff007f;
+            box-shadow: 0 10px 30px rgba(255, 0, 127, 0.1);
+            transform: translateY(-2px);
         }
 
         .upload-card h4 {
-            color: #00f7ff;
-            font-size: 1.3rem;
+            color: #ff007f;
+            font-size: 1.1rem;
+            font-weight: 300;
             margin-bottom: 15px;
             display: flex;
             align-items: center;
@@ -251,52 +262,61 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            background: rgba(0, 247, 255, 0.1);
-            border: 2px solid #00f7ff;
-            border-radius: 50px;
-            padding: 15px 25px;
-            color: white;
-            font-size: 1rem;
+            background: rgba(255, 0, 127, 0.03);
+            border: 1px solid rgba(255, 0, 127, 0.3);
+            border-radius: 100px;
+            padding: 14px 25px;
+            color: #a6a6a6;
+            font-size: 0.9rem;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s ease;
             text-align: center;
+            letter-spacing: 1px;
         }
 
         .file-label:hover {
-            background: #00f7ff;
-            color: black;
-            box-shadow: 0 0 30px #00f7ff;
+            background: rgba(255, 0, 127, 0.1);
+            border-color: #ff007f;
+            color: #ffffff;
         }
 
         .format-info {
-            background: rgba(255, 0, 193, 0.1);
-            border-left: 4px solid #ff00c1;
+            background: rgba(0, 0, 0, 0.5);
+            border-left: 2px solid #a6a6a6;
             padding: 15px;
             margin: 15px 0;
-            border-radius: 10px;
-            font-size: 0.9rem;
-            color: #ccc;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #a6a6a6;
+            line-height: 1.6;
         }
 
         .format-info strong {
-            color: #ffb800;
+            color: #ff007f;
+            font-weight: 400;
         }
 
         .preview-area {
-            background: rgba(0, 0, 0, 0.8);
-            border-radius: 15px;
+            background: rgba(0, 0, 0, 0.9);
+            border-radius: 12px;
             padding: 20px;
             margin-top: 20px;
             max-height: 300px;
             overflow-y: auto;
+            border: 1px solid rgba(255, 0, 127, 0.2);
         }
 
         .preview-item {
-            color: #00f7ff;
-            padding: 8px;
-            border-bottom: 1px solid rgba(255, 0, 193, 0.3);
-            font-family: monospace;
+            color: #a6a6a6;
+            padding: 8px 12px;
+            border-bottom: 1px solid rgba(255, 0, 127, 0.1);
+            font-family: 'Inter', monospace;
             white-space: pre-wrap;
+            font-size: 0.9rem;
+        }
+
+        .preview-item:last-child {
+            border-bottom: none;
         }
 
         .input-group {
@@ -306,30 +326,39 @@
         }
 
         .input-group h3 {
-            color: #ffb800;
+            color: #ff007f;
             text-transform: uppercase;
             letter-spacing: 2px;
-            font-size: 1.3rem;
-            text-shadow: 0 0 10px #ffb800;
-            border-left: 4px solid #ff00c1;
+            font-size: 1.1rem;
+            font-weight: 300;
+            border-left: 2px solid #a6a6a6;
             padding-left: 15px;
         }
 
         input, select, textarea {
-            background: rgba(0, 0, 0, 0.7);
-            border: 2px solid #00f7ff;
-            border-radius: 15px;
-            padding: 15px 20px;
-            color: white;
-            font-size: 1rem;
-            transition: all 0.3s;
-            box-shadow: 0 0 20px rgba(0, 247, 255, 0.2);
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid rgba(166, 166, 166, 0.3);
+            border-radius: 12px;
+            padding: 14px 18px;
+            color: #ffffff;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
         }
 
         input:focus, select:focus, textarea:focus {
             outline: none;
-            border-color: #ff00c1;
-            box-shadow: 0 0 30px #ff00c1;
+            border-color: #ff007f;
+            box-shadow: 0 0 30px rgba(255, 0, 127, 0.1);
+        }
+
+        select {
+            color: #a6a6a6;
+            cursor: pointer;
+        }
+
+        select option {
+            background: #000000;
+            color: #ffffff;
         }
 
         textarea {
@@ -339,56 +368,56 @@
 
         .neon-button {
             background: transparent;
-            border: 2px solid #ff00c1;
-            color: white;
-            padding: 15px 30px;
-            border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: bold;
+            border: 1px solid rgba(255, 0, 127, 0.4);
+            color: #a6a6a6;
+            padding: 14px 28px;
+            border-radius: 100px;
+            font-size: 0.95rem;
+            font-weight: 400;
             text-transform: uppercase;
             letter-spacing: 2px;
             cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 0 20px rgba(255, 0, 193, 0.3);
+            transition: all 0.2s ease;
             position: relative;
             overflow: hidden;
         }
 
         .neon-button:hover:not(:disabled) {
-            background: #ff00c1;
-            color: black;
-            box-shadow: 0 0 40px #ff00c1, 0 0 80px #ff00c1;
-            transform: translateY(-3px);
+            background: rgba(255, 0, 127, 0.1);
+            border-color: #ff007f;
+            color: #ffffff;
+            box-shadow: 0 10px 30px rgba(255, 0, 127, 0.15);
+            transform: translateY(-1px);
         }
 
         .neon-button:disabled {
-            opacity: 0.5;
+            opacity: 0.3;
             cursor: not-allowed;
         }
 
         .neon-button.small {
             padding: 10px 20px;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         .success-message {
-            background: rgba(0, 255, 0, 0.1);
-            border: 1px solid #00ff00;
-            color: #00ff00;
+            background: rgba(255, 0, 127, 0.05);
+            border: 1px solid #ff007f;
+            color: #ff007f;
             padding: 15px;
-            border-radius: 15px;
+            border-radius: 12px;
             margin-top: 15px;
             text-align: center;
-            box-shadow: 0 0 20px #00ff00;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
         }
 
         .libraries-section {
-            background: rgba(0, 247, 255, 0.05);
-            border-radius: 30px;
+            background: rgba(10, 10, 10, 0.6);
+            border-radius: 24px;
             padding: 30px;
             margin-bottom: 30px;
-            border: 1px solid #ffb800;
-            box-shadow: 0 0 30px rgba(255, 184, 0, 0.3);
+            border: 1px solid rgba(255, 0, 127, 0.1);
         }
 
         .library-header {
@@ -399,15 +428,22 @@
             margin-bottom: 20px;
         }
 
+        .library-header h3 {
+            color: #a6a6a6;
+            font-weight: 300;
+            letter-spacing: 2px;
+            font-size: 1.2rem;
+        }
+
         .library-selector {
             flex: 1;
             min-width: 250px;
-            background: rgba(0, 0, 0, 0.8);
-            border: 2px solid #ffb800;
-            color: white;
-            padding: 15px;
-            border-radius: 50px;
-            font-size: 1.1rem;
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid rgba(255, 0, 127, 0.3);
+            color: #a6a6a6;
+            padding: 12px 20px;
+            border-radius: 100px;
+            font-size: 0.95rem;
         }
 
         .libraries-grid {
@@ -418,52 +454,52 @@
         }
 
         .library-item {
-            background: rgba(0, 0, 0, 0.6);
-            border: 2px solid #00f7ff;
-            border-radius: 20px;
-            padding: 15px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(166, 166, 166, 0.2);
+            border-radius: 16px;
+            padding: 16px;
             color: white;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: all 0.3s;
+            transition: all 0.2s ease;
             cursor: pointer;
         }
 
         .library-item:hover {
-            border-color: #ff00c1;
-            box-shadow: 0 0 25px #ff00c1;
-            transform: scale(1.02);
+            border-color: #ff007f;
+            box-shadow: 0 5px 20px rgba(255, 0, 127, 0.1);
+            transform: translateY(-1px);
         }
 
         .library-item.active {
-            border-color: #ffb800;
-            background: rgba(255, 184, 0, 0.1);
-            box-shadow: 0 0 30px #ffb800;
+            border-color: #ff007f;
+            background: rgba(255, 0, 127, 0.03);
+            box-shadow: 0 5px 20px rgba(255, 0, 127, 0.15);
         }
 
         .library-name {
-            font-weight: bold;
-            color: #00f7ff;
+            font-weight: 400;
+            color: #ffffff;
+            letter-spacing: 0.5px;
         }
 
         .library-count {
-            background: #ff00c1;
-            color: white;
-            padding: 3px 10px;
-            border-radius: 50px;
-            font-size: 0.8rem;
+            background: rgba(255, 0, 127, 0.1);
+            color: #ff007f;
+            padding: 4px 12px;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            border: 1px solid rgba(255, 0, 127, 0.2);
         }
 
         .study-mode {
-            background: rgba(0, 0, 0, 0.8);
-            border-radius: 40px;
-            padding: 30px;
+            background: rgba(10, 10, 10, 0.8);
+            border-radius: 32px;
+            padding: 40px;
             margin-top: 30px;
-            border: 2px solid;
-            border-image-slice: 1;
-            border-image-source: linear-gradient(45deg, #00f7ff, #ff00c1);
-            box-shadow: 0 0 50px rgba(0, 247, 255, 0.5);
+            border: 1px solid rgba(255, 0, 127, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
         }
 
         .study-header {
@@ -476,11 +512,12 @@
         }
 
         .study-title {
-            font-size: 2.5rem;
-            color: #ffb800;
-            text-shadow: 0 0 20px #ffb800;
-            text-transform: uppercase;
-            letter-spacing: 3px;
+            font-size: 2rem;
+            color: #ffffff;
+            font-weight: 300;
+            letter-spacing: 2px;
+            border-bottom: 1px solid rgba(255, 0, 127, 0.3);
+            padding-bottom: 10px;
         }
 
         .study-controls {
@@ -490,12 +527,12 @@
         }
 
         .study-progress {
-            color: #00f7ff;
-            font-size: 1.2rem;
-            border: 2px solid #00f7ff;
-            padding: 10px 25px;
-            border-radius: 50px;
-            box-shadow: 0 0 20px #00f7ff;
+            color: #a6a6a6;
+            font-size: 1rem;
+            border: 1px solid rgba(255, 0, 127, 0.3);
+            padding: 8px 20px;
+            border-radius: 100px;
+            background: rgba(0, 0, 0, 0.5);
         }
 
         .study-card-container {
@@ -513,7 +550,7 @@
             height: 500px;
             cursor: pointer;
             position: relative;
-            transition: transform 0.8s;
+            transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
             transform-style: preserve-3d;
         }
 
@@ -526,123 +563,192 @@
             width: 100%;
             height: 100%;
             backface-visibility: hidden;
-            border-radius: 40px;
+            border-radius: 24px;
             padding: 60px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
         }
 
         .study-card-front {
-            background: linear-gradient(145deg, #0a1a2a, #1a0f2a);
-            border: 3px solid #00f7ff;
-            box-shadow: 0 0 50px #00f7ff, inset 0 0 30px rgba(0,247,255,0.3);
+            background: linear-gradient(145deg, #0a0a0a, #000000);
+            border: 1px solid rgba(255, 0, 127, 0.3);
+            box-shadow: 0 0 30px rgba(255, 0, 127, 0.1), inset 0 0 20px rgba(255, 0, 127, 0.05);
         }
 
         .study-card-back {
-            background: linear-gradient(145deg, #1a0f2a, #0a1a2a);
-            border: 3px solid #ffb800;
-            box-shadow: 0 0 50px #ffb800, inset 0 0 30px rgba(255,184,0,0.3);
+            background: linear-gradient(145deg, #000000, #0a0a0a);
+            border: 1px solid rgba(166, 166, 166, 0.3);
+            box-shadow: 0 0 30px rgba(166, 166, 166, 0.1), inset 0 0 20px rgba(166, 166, 166, 0.05);
             transform: rotateY(180deg);
         }
 
         .study-term {
-            font-size: 4rem;
-            font-weight: 800;
-            color: #00f7ff;
-            text-shadow: 0 0 30px #00f7ff;
+            font-size: 3.5rem;
+            font-weight: 300;
+            color: #ff007f;
+            text-shadow: 0 0 30px rgba(255, 0, 127, 0.3);
             margin-bottom: 30px;
             word-wrap: break-word;
             max-width: 100%;
+            line-height: 1.3;
         }
 
         .study-definition {
-            font-size: 2.5rem;
-            color: #ffb800;
-            text-shadow: 0 0 30px #ffb800;
+            font-size: 2.2rem;
+            font-weight: 300;
+            color: #ffffff;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
             word-wrap: break-word;
             max-width: 100%;
             line-height: 1.4;
         }
 
+        .study-hint {
+            position: absolute;
+            bottom: 30px;
+            color: #a6a6a6;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.5;
+        }
+
         .study-navigation {
             display: flex;
             justify-content: center;
-            gap: 30px;
-            margin-top: 40px;
+            gap: 20px;
+            margin-top: 30px;
         }
 
         .nav-button {
             background: transparent;
-            border: 2px solid #ff00c1;
-            color: white;
-            width: 70px;
-            height: 70px;
+            border: 1px solid rgba(255, 0, 127, 0.3);
+            color: #a6a6a6;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
-            font-size: 2rem;
+            font-size: 1.8rem;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
         .nav-button:hover:not(:disabled) {
-            background: #ff00c1;
-            box-shadow: 0 0 40px #ff00c1;
-            transform: scale(1.1);
+            border-color: #ff007f;
+            color: #ff007f;
+            box-shadow: 0 0 30px rgba(255, 0, 127, 0.2);
+            transform: scale(1.05);
+        }
+
+        .nav-button:disabled {
+            opacity: 0.2;
+            cursor: not-allowed;
         }
 
         .mini-flashcards-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 12px;
             margin-top: 30px;
         }
 
         .mini-flashcard {
-            background: rgba(0, 0, 0, 0.6);
-            border: 2px solid #00f7ff;
-            border-radius: 15px;
-            padding: 15px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(166, 166, 166, 0.2);
+            border-radius: 12px;
+            padding: 12px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s ease;
             text-align: center;
             position: relative;
+            color: #a6a6a6;
+            font-size: 0.85rem;
         }
 
         .mini-flashcard:hover {
-            border-color: #ff00c1;
-            box-shadow: 0 0 20px #ff00c1;
+            border-color: #ff007f;
+            box-shadow: 0 5px 15px rgba(255, 0, 127, 0.1);
+            color: #ffffff;
         }
 
         .mini-flashcard.active {
-            border-color: #ffb800;
-            box-shadow: 0 0 30px #ffb800;
+            border-color: #ff007f;
+            background: rgba(255, 0, 127, 0.03);
+            color: #ffffff;
         }
 
         .delete-btn {
-            background: rgba(255, 0, 0, 0.3);
+            background: rgba(255, 0, 127, 0.1);
             border: none;
-            color: white;
-            width: 25px;
-            height: 25px;
+            color: #ff007f;
+            width: 22px;
+            height: 22px;
             border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
+            font-size: 1rem;
             position: absolute;
             top: 5px;
             right: 5px;
+            transition: all 0.2s ease;
         }
 
         .delete-btn:hover {
-            background: rgba(255, 0, 0, 0.8);
+            background: #ff007f;
+            color: #000000;
+        }
+
+        /* Scrollbar personalizado */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 0, 127, 0.3);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ff007f;
+        }
+
+        @media (max-width: 768px) {
+            .creator-section {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+
+            .study-term {
+                font-size: 2.2rem;
+            }
+
+            .study-definition {
+                font-size: 1.6rem;
+            }
+
+            .study-card {
+                height: 400px;
+            }
+
+            .study-card-front, .study-card-back {
+                padding: 30px;
+            }
         }
     </style>
     <!-- Cargar Firebase -->
@@ -653,17 +759,17 @@
 </head>
 <body>
     <div class="container">
-        <h1>⚡ BAD BOYS LIVE SYNC ⚡</h1>
+        <h1>FLASH FUTURE</h1>
         <div style="text-align: center; margin-bottom: 30px;">
-            <span class="badge">SINCRONIZACIÓN EN TIEMPO REAL</span>
-            <div id="syncStatus" class="sync-status">✅ CONECTANDO...</div>
+            <span class="badge">SISTEMA PROFESIONAL DE FLASHCARDS</span>
+            <div id="syncStatus" class="sync-status">CONECTANDO...</div>
         </div>
 
         <!-- Sección de carga masiva -->
         <div class="batch-upload-section">
             <div class="upload-title">
-                <span>📂 CARGA MASIVA DE FLASHCARDS</span>
-                <span style="font-size: 1rem; color: #00f7ff;">PEGA TEXTO O SUBE ARCHIVOS</span>
+                <span>CARGA MASIVA</span>
+                <span style="font-size: 0.9rem; color: #a6a6a6;">PEGA TEXTO O SUBE ARCHIVOS</span>
             </div>
             
             <!-- ÁREA DE PEGADO DIRECTO -->
@@ -675,9 +781,8 @@
                     • Pregunta → Respuesta<br>
                     • Pregunta: Respuesta<br>
                     • "Pregunta","Respuesta"<br><br>
-                    <strong>Ejemplo de tu texto:</strong><br>
-                    ¿SHA-256 es cifrado o hashing? | Es hashing, porque es una función unidireccional que no permite recuperar el valor original.<br>
-                    ¿Qué problema tiene guardar contraseñas solo con SHA-256? | Es vulnerable a ataques de fuerza bruta y rainbow tables si no se usa salt.
+                    <strong>Ejemplo:</strong><br>
+                    ¿SHA-256 es cifrado o hashing? | Es hashing, porque es una función unidireccional
                 </div>
                 <textarea id="pasteTextarea" class="paste-textarea" placeholder="Pega aquí tus flashcards (una por línea)"></textarea>
                 <select id="pasteLibrarySelect" class="library-selector" style="margin: 10px 0; width: 100%;">
@@ -753,13 +858,13 @@
         <!-- Sección para agregar flashcards manualmente -->
         <div class="creator-section">
             <div class="input-group">
-                <h3>➕ NUEVA BIBLIOTECA</h3>
+                <h3>NUEVA BIBLIOTECA</h3>
                 <input type="text" id="newLibraryName" placeholder="Nombre de la biblioteca">
                 <button class="neon-button" onclick="createLibrary()">CREAR BIBLIOTECA</button>
             </div>
             
             <div class="input-group">
-                <h3>📝 NUEVA FLASHCARD</h3>
+                <h3>NUEVA FLASHCARD</h3>
                 <select id="librarySelect">
                     <option value="">Selecciona una biblioteca</option>
                 </select>
@@ -772,7 +877,7 @@
         <!-- Sección de bibliotecas -->
         <div class="libraries-section">
             <div class="library-header">
-                <h3 style="color: #ffb800; text-shadow: 0 0 10px #ffb800;">📚 TUS BIBLIOTECAS</h3>
+                <h3>BIBLIOTECAS</h3>
                 <select id="activeLibrarySelect" class="library-selector" onchange="selectLibrary(this.value)">
                     <option value="">Todas las bibliotecas</option>
                 </select>
@@ -783,10 +888,10 @@
         <!-- MODO ESTUDIO -->
         <div id="studyMode" class="study-mode" style="display: none;">
             <div class="study-header">
-                <h2 id="currentLibraryTitle" class="study-title">BIBLIOTECA SELECCIONADA</h2>
+                <h2 id="currentLibraryTitle" class="study-title">BIBLIOTECA</h2>
                 <div class="study-controls">
                     <span id="studyProgress" class="study-progress">0/0</span>
-                    <button class="neon-button small" onclick="shuffleCurrentLibrary()">🔀 MEZCLAR</button>
+                    <button class="neon-button small" onclick="shuffleCurrentLibrary()">MEZCLAR</button>
                 </div>
             </div>
 
@@ -794,9 +899,11 @@
                 <div id="studyCard" class="study-card" onclick="flipStudyCard()">
                     <div class="study-card-front">
                         <div id="studyTerm" class="study-term">Término</div>
+                        <div class="study-hint">CLICK PARA VER RESPUESTA</div>
                     </div>
                     <div class="study-card-back">
                         <div id="studyDefinition" class="study-definition">Definición</div>
+                        <div class="study-hint">CLICK PARA VER PREGUNTA</div>
                     </div>
                 </div>
             </div>
@@ -858,9 +965,8 @@
                     localStorage.setItem('badboys_libraries', JSON.stringify(libraries));
                     localStorage.setItem('badboys_flashcards', JSON.stringify(flashcards));
                     
-                    document.getElementById('syncStatus').textContent = '✅ CONECTADO A FIREBASE';
-                    document.getElementById('syncStatus').style.borderColor = '#00ff00';
-                    document.getElementById('syncStatus').style.color = '#00ff00';
+                    document.getElementById('syncStatus').textContent = 'CONECTADO';
+                    document.getElementById('syncStatus').className = 'sync-status connected';
                     
                     updateUI();
                 }).catch((error) => {
@@ -868,9 +974,9 @@
                 });
             }).catch((error) => {
                 console.error("Error cargando bibliotecas:", error);
-                document.getElementById('syncStatus').textContent = '⚠️ ERROR DE CONEXIÓN';
-                document.getElementById('syncStatus').style.borderColor = '#ff0000';
-                document.getElementById('syncStatus').style.color = '#ff0000';
+                document.getElementById('syncStatus').textContent = 'ERROR DE CONEXIÓN';
+                document.getElementById('syncStatus').style.borderColor = '#ff007f';
+                document.getElementById('syncStatus').style.color = '#ff007f';
                 
                 // Fallback a localStorage
                 libraries = JSON.parse(localStorage.getItem('badboys_libraries')) || [];
@@ -883,17 +989,6 @@
         // Escuchar cambios en bibliotecas
         db.collection('libraries').onSnapshot((snapshot) => {
             console.log('Cambios detectados en bibliotecas!');
-            snapshot.docChanges().forEach((change) => {
-                if (change.type === 'added') {
-                    console.log('Nueva biblioteca añadida:', change.doc.data());
-                }
-                if (change.type === 'modified') {
-                    console.log('Biblioteca modificada:', change.doc.data());
-                }
-                if (change.type === 'removed') {
-                    console.log('Biblioteca eliminada:', change.doc.id);
-                }
-            });
             updateFromFirebase();
         }, (error) => {
             console.error("Error en snapshot de bibliotecas:", error);
@@ -902,17 +997,6 @@
         // Escuchar cambios en flashcards
         db.collection('flashcards').onSnapshot((snapshot) => {
             console.log('Cambios detectados en flashcards!');
-            snapshot.docChanges().forEach((change) => {
-                if (change.type === 'added') {
-                    console.log('Nueva flashcard añadida:', change.doc.data());
-                }
-                if (change.type === 'modified') {
-                    console.log('Flashcard modificada:', change.doc.data());
-                }
-                if (change.type === 'removed') {
-                    console.log('Flashcard eliminada:', change.doc.id);
-                }
-            });
             updateFromFirebase();
         }, (error) => {
             console.error("Error en snapshot de flashcards:", error);
@@ -922,7 +1006,7 @@
         window.createLibrary = async function() {
             const name = document.getElementById('newLibraryName').value.trim();
             if (!name) {
-                alert('🔥 ¡Ponle nombre a la biblioteca, Bad Boy!');
+                alert('Ingresa un nombre para la biblioteca');
                 return;
             }
 
@@ -931,29 +1015,24 @@
                 name: name
             };
 
-            // Guardar en Firebase
             try {
                 await db.collection('libraries').doc(newLibrary.id).set({
                     name: newLibrary.name
                 });
-                console.log('Biblioteca guardada en Firebase:', newLibrary);
                 document.getElementById('newLibraryName').value = '';
-                // No llamamos a updateUI aquí, el snapshot lo hará automáticamente
             } catch (error) {
                 console.error("Error guardando en Firebase:", error);
-                alert('❌ Error al guardar en Firebase. Verifica tu conexión.');
+                alert('Error al guardar. Verifica tu conexión.');
             }
         };
 
         window.deleteLibrary = async function(id, event) {
             event.stopPropagation();
-            if (confirm('¿Seguro que quieres eliminar esta biblioteca? También se borrarán sus flashcards.')) {
+            if (confirm('¿Eliminar esta biblioteca? También se eliminarán sus flashcards.')) {
                 
                 try {
-                    // Eliminar de Firebase
                     await db.collection('libraries').doc(id).delete();
                     
-                    // Eliminar flashcards asociadas
                     const cardsToDelete = flashcards.filter(c => c.libraryId === id);
                     for (const card of cardsToDelete) {
                         await db.collection('flashcards').doc(card.id).delete();
@@ -963,11 +1042,9 @@
                         currentLibrary = 'all';
                         localStorage.setItem('badboys_currentLibrary', 'all');
                     }
-                    
-                    // No llamamos a updateUI aquí, el snapshot lo hará automáticamente
                 } catch (error) {
                     console.error("Error eliminando de Firebase:", error);
-                    alert('❌ Error al eliminar. Verifica tu conexión.');
+                    alert('Error al eliminar. Verifica tu conexión.');
                 }
             }
         };
@@ -978,12 +1055,12 @@
             const definition = document.getElementById('definitionInput').value.trim();
 
             if (!libraryId) {
-                alert('🔥 ¡Selecciona una biblioteca primero!');
+                alert('Selecciona una biblioteca');
                 return;
             }
 
             if (!term || !definition) {
-                alert('🔥 ¡Completa término y definición!');
+                alert('Completa término y definición');
                 return;
             }
 
@@ -995,7 +1072,6 @@
             };
 
             try {
-                // Guardar en Firebase
                 await db.collection('flashcards').doc(newCard.id).set({
                     libraryId: libraryId,
                     term: term,
@@ -1004,11 +1080,9 @@
                 
                 document.getElementById('termInput').value = '';
                 document.getElementById('definitionInput').value = '';
-                
-                // No llamamos a updateUI aquí, el snapshot lo hará automáticamente
             } catch (error) {
                 console.error("Error guardando en Firebase:", error);
-                alert('❌ Error al guardar en Firebase. Verifica tu conexión.');
+                alert('Error al guardar. Verifica tu conexión.');
             }
         };
 
@@ -1017,10 +1091,9 @@
             if (confirm('¿Eliminar esta flashcard?')) {
                 try {
                     await db.collection('flashcards').doc(id).delete();
-                    // No llamamos a updateUI aquí, el snapshot lo hará automáticamente
                 } catch (error) {
                     console.error("Error eliminando de Firebase:", error);
-                    alert('❌ Error al eliminar. Verifica tu conexión.');
+                    alert('Error al eliminar. Verifica tu conexión.');
                 }
             }
         };
@@ -1067,7 +1140,7 @@
         window.previewPastedText = function() {
             const text = document.getElementById('pasteTextarea').value;
             if (!text.trim()) {
-                alert('🔥 ¡Pega algún texto primero!');
+                alert('Pega algún texto primero');
                 return;
             }
 
@@ -1095,21 +1168,21 @@
             document.getElementById('importPasteBtn').disabled = currentPasteData.length === 0;
             
             if (currentPasteData.length > 0) {
-                showMessage(`✅ Se detectaron ${currentPasteData.length} flashcards`, 'success');
+                showMessage(`Se detectaron ${currentPasteData.length} flashcards`, 'success');
             } else {
-                showMessage('❌ No se pudo detectar ningún formato válido', 'error');
+                showMessage('No se detectaron flashcards válidas', 'error');
             }
         };
 
         window.importPastedText = async function() {
             const libraryId = document.getElementById('pasteLibrarySelect').value;
             if (!libraryId) {
-                alert('🔥 ¡Selecciona una biblioteca destino!');
+                alert('Selecciona una biblioteca destino');
                 return;
             }
 
             if (currentPasteData.length === 0) {
-                alert('🔥 No hay datos para importar');
+                alert('No hay datos para importar');
                 return;
             }
 
@@ -1132,7 +1205,7 @@
                 }
             }
 
-            showMessage(`✅ ¡${imported} flashcards importadas desde texto!`, 'success');
+            showMessage(`${imported} flashcards importadas`, 'success');
             
             document.getElementById('pasteTextarea').value = '';
             document.getElementById('pastePreview').style.display = 'none';
@@ -1176,7 +1249,7 @@
                 preview.innerHTML = previewLines.map(l => `<div class="preview-item">${l}</div>`).join('');
                 
                 document.getElementById('importCSVBtn').disabled = currentCSVData.length === 0;
-                showMessage(`✅ Se detectaron ${currentCSVData.length} flashcards en CSV`, 'success');
+                showMessage(`Se detectaron ${currentCSVData.length} flashcards`, 'success');
             };
             reader.readAsText(file);
         };
@@ -1184,12 +1257,12 @@
         window.importCSV = async function() {
             const libraryId = document.getElementById('csvLibrarySelect').value;
             if (!libraryId) {
-                alert('🔥 ¡Selecciona una biblioteca destino!');
+                alert('Selecciona una biblioteca destino');
                 return;
             }
 
             if (currentCSVData.length === 0) {
-                alert('🔥 No hay datos para importar');
+                alert('No hay datos para importar');
                 return;
             }
 
@@ -1212,7 +1285,7 @@
                 }
             }
 
-            showMessage(`✅ ¡${imported} flashcards importadas desde CSV!`, 'success');
+            showMessage(`${imported} flashcards importadas`, 'success');
             
             document.getElementById('csvFile').value = '';
             document.getElementById('csvPreview').style.display = 'none';
@@ -1247,7 +1320,7 @@
                 preview.innerHTML = previewLines.map(l => `<div class="preview-item">${l}</div>`).join('');
                 
                 document.getElementById('importTXTBtn').disabled = currentTXTData.length === 0;
-                showMessage(`✅ Se detectaron ${currentTXTData.length} flashcards en TXT`, 'success');
+                showMessage(`Se detectaron ${currentTXTData.length} flashcards`, 'success');
             };
             reader.readAsText(file);
         };
@@ -1255,12 +1328,12 @@
         window.importTXT = async function() {
             const libraryId = document.getElementById('txtLibrarySelect').value;
             if (!libraryId) {
-                alert('🔥 ¡Selecciona una biblioteca destino!');
+                alert('Selecciona una biblioteca destino');
                 return;
             }
 
             if (currentTXTData.length === 0) {
-                alert('🔥 No hay datos para importar');
+                alert('No hay datos para importar');
                 return;
             }
 
@@ -1283,7 +1356,7 @@
                 }
             }
 
-            showMessage(`✅ ¡${imported} flashcards importadas desde TXT!`, 'success');
+            showMessage(`${imported} flashcards importadas`, 'success');
             
             document.getElementById('txtFile').value = '';
             document.getElementById('txtPreview').style.display = 'none';
@@ -1321,10 +1394,10 @@
                         preview.style.display = 'block';
                         preview.innerHTML = previewLines.length > 0 
                             ? previewLines.map(l => `<div class="preview-item">${l}</div>`).join('')
-                            : '<div class="preview-item">⚠️ No se detectaron flashcards en el documento</div>';
+                            : '<div class="preview-item">⚠️ No se detectaron flashcards</div>';
                         
                         document.getElementById('importWORDBtn').disabled = currentWORDData.length === 0;
-                        showMessage(`✅ Se detectaron ${currentWORDData.length} flashcards en Word`, 'success');
+                        showMessage(`Se detectaron ${currentWORDData.length} flashcards`, 'success');
                     })
                     .catch(function(error) {
                         console.error(error);
@@ -1337,12 +1410,12 @@
         window.importWORD = async function() {
             const libraryId = document.getElementById('wordLibrarySelect').value;
             if (!libraryId) {
-                alert('🔥 ¡Selecciona una biblioteca destino!');
+                alert('Selecciona una biblioteca destino');
                 return;
             }
 
             if (currentWORDData.length === 0) {
-                alert('🔥 No hay datos para importar');
+                alert('No hay datos para importar');
                 return;
             }
 
@@ -1365,7 +1438,7 @@
                 }
             }
 
-            showMessage(`✅ ¡${imported} flashcards importadas desde Word!`, 'success');
+            showMessage(`${imported} flashcards importadas`, 'success');
             
             document.getElementById('wordFile').value = '';
             document.getElementById('wordPreview').style.display = 'none';
@@ -1377,9 +1450,9 @@
             const msg = document.getElementById('uploadMessage');
             msg.style.display = 'block';
             msg.textContent = text;
-            msg.style.background = type === 'success' ? 'rgba(0, 255, 0, 0.1)' : 'rgba(255, 0, 0, 0.1)';
-            msg.style.borderColor = type === 'success' ? '#00ff00' : '#ff0000';
-            msg.style.color = type === 'success' ? '#00ff00' : '#ff0000';
+            msg.style.background = type === 'success' ? 'rgba(255, 0, 127, 0.05)' : 'rgba(255, 0, 0, 0.05)';
+            msg.style.borderColor = type === 'success' ? '#ff007f' : '#ff0000';
+            msg.style.color = type === 'success' ? '#ff007f' : '#ff0000';
             
             setTimeout(() => {
                 msg.style.display = 'none';
@@ -1447,8 +1520,8 @@
                     }
                 });
             } else {
-                document.getElementById('studyTerm').textContent = '📚 VACÍO';
-                document.getElementById('studyDefinition').textContent = 'Agrega flashcards a esta biblioteca';
+                document.getElementById('studyTerm').textContent = 'VACÍO';
+                document.getElementById('studyDefinition').textContent = 'Agrega flashcards';
                 document.getElementById('studyProgress').textContent = '0/0';
             }
         }
