@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FLASH BAD BOYS - VERSIÓN ESTABLE</title>
+    <title>FLASH BAD BOYS - FIREBASE OK</title>
     <style>
         * {
             margin: 0;
@@ -106,49 +106,22 @@
             margin-bottom: 20px;
         }
 
-        .sync-buttons {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-        }
-
-        .sync-button {
-            background: transparent;
-            border: 2px solid #00f7ff;
-            color: #00f7ff;
-            padding: 15px 30px;
+        .sync-status {
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            padding: 10px 20px;
             border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 0 20px rgba(0, 247, 255, 0.3);
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            display: inline-block;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            animation: pulse 2s infinite;
         }
 
-        .sync-button:hover {
-            background: #00f7ff;
-            color: black;
-            box-shadow: 0 0 40px #00f7ff;
-            transform: translateY(-3px);
-        }
-
-        .sync-button.export {
-            border-color: #ffb800;
-            color: #ffb800;
-            box-shadow: 0 0 20px rgba(255, 184, 0, 0.3);
-        }
-
-        .sync-button.export:hover {
-            background: #ffb800;
-            color: black;
-            box-shadow: 0 0 40px #ffb800;
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
         }
 
         .creator-section {
@@ -407,13 +380,6 @@
             margin-top: 15px;
             text-align: center;
             box-shadow: 0 0 20px #00ff00;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.7; }
-            100% { opacity: 1; }
         }
 
         .libraries-section {
@@ -630,6 +596,11 @@
             transform: scale(1.1);
         }
 
+        .nav-button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
         .mini-flashcards-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -678,33 +649,15 @@
         .delete-btn:hover {
             background: rgba(255, 0, 0, 0.8);
         }
-
-        .hidden {
-            display: none !important;
-        }
-
-        #importFile {
-            display: none;
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>⚡ BAD BOYS FLASHCARDS ⚡</h1>
+        <h1>⚡ BAD BOYS FIREBASE ⚡</h1>
         <div style="text-align: center; margin-bottom: 30px;">
-            <span class="badge">VERSIÓN ESTABLE - SINCRONIZACIÓN MANUAL</span>
+            <span class="badge">SINCRONIZACIÓN AUTOMÁTICA ENTRE DISPOSITIVOS</span>
+            <div id="syncStatus" class="sync-status">✅ CONECTADO A FIREBASE</div>
         </div>
-
-        <!-- Botones de sincronización -->
-        <div class="sync-buttons">
-            <button class="sync-button export" onclick="exportData()">
-                📤 EXPORTAR FLASHCARDS
-            </button>
-            <button class="sync-button" onclick="document.getElementById('importFile').click()">
-                📥 IMPORTAR FLASHCARDS
-            </button>
-        </div>
-        <input type="file" id="importFile" accept=".json" onchange="importData(this)">
 
         <!-- Sección de carga masiva -->
         <div class="batch-upload-section">
@@ -841,90 +794,110 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
-    <script>
-        // ============ VARIABLES GLOBALES ============
-        let libraries = JSON.parse(localStorage.getItem('badboys_libraries')) || [];
-        let flashcards = JSON.parse(localStorage.getItem('badboys_flashcards')) || [];
-        let currentLibrary = localStorage.getItem('badboys_currentLibrary') || 'all';
-        let currentStudyIndex = 0;
-        let studyCards = [];
-        let currentPasteData = [];
-        let currentCSVData = [];
-        let currentTXTData = [];
+    <!-- Importar Firebase como módulo -->
+    <script type="import">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+        import { getFirestore, collection, doc, setDoc, deleteDoc, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
-        // ============ FUNCIONES DE EXPORTACIÓN/IMPORTACIÓN ============
-        function exportData() {
-            const data = {
-                libraries: libraries,
-                flashcards: flashcards,
-                fecha: new Date().toISOString(),
-                version: '1.0'
-            };
-            
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `flashcards_${new Date().toISOString().slice(0,10)}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
-            
-            showMessage('✅ Archivo exportado correctamente', 'success');
-        }
+        // Configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyCpEC9VpbKrn56iYVbLDn7TdB6KIW3060o",
+            authDomain: "estudio-890ee.firebaseapp.com",
+            projectId: "estudio-890ee",
+            storageBucket: "estudio-890ee.firebasestorage.app",
+            messagingSenderId: "296063325492",
+            appId: "1:296063325492:web:e63b0f9bef22a47123c161"
+        };
 
-        function importData(input) {
-            const file = input.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = JSON.parse(e.target.result);
-                    
-                    if (confirm('¿Quieres COMBINAR con las flashcards existentes?\n\nOK = Combinar\nCancelar = Reemplazar todo')) {
-                        // Combinar
-                        const existingIds = new Set(flashcards.map(f => f.id));
-                        const existingLibIds = new Set(libraries.map(l => l.id));
-                        
-                        data.flashcards.forEach(card => {
-                            if (!existingIds.has(card.id)) {
-                                flashcards.push(card);
-                            }
-                        });
-                        
-                        data.libraries.forEach(lib => {
-                            if (!existingLibIds.has(lib.id)) {
-                                libraries.push(lib);
-                            }
-                        });
-                        
-                        showMessage(`✅ Combinadas: ${data.flashcards.length} flashcards`, 'success');
-                    } else {
-                        // Reemplazar
-                        libraries = data.libraries || [];
-                        flashcards = data.flashcards || [];
-                        showMessage(`✅ Reemplazadas: ${flashcards.length} flashcards`, 'success');
-                    }
-                    
-                    saveData();
-                } catch (error) {
-                    alert('❌ Error al leer el archivo: ' + error.message);
+        // Inicializar Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Variables globales
+        window.libraries = [];
+        window.flashcards = [];
+        window.currentLibrary = localStorage.getItem('badboys_currentLibrary') || 'all';
+        window.currentStudyIndex = 0;
+        window.studyCards = [];
+        window.currentPasteData = [];
+        window.currentCSVData = [];
+        window.currentTXTData = [];
+
+        // ============ FUNCIONES DE FIREBASE ============
+        window.loadFromFirebase = async function() {
+            try {
+                document.getElementById('syncStatus').textContent = '🔄 SINCRONIZANDO...';
+                
+                // Cargar bibliotecas
+                const libsSnapshot = await getDocs(collection(db, "libraries"));
+                window.libraries = [];
+                libsSnapshot.forEach((doc) => {
+                    window.libraries.push({ id: doc.id, ...doc.data() });
+                });
+                
+                // Cargar flashcards
+                const cardsSnapshot = await getDocs(collection(db, "flashcards"));
+                window.flashcards = [];
+                cardsSnapshot.forEach((doc) => {
+                    window.flashcards.push({ id: doc.id, ...doc.data() });
+                });
+                
+                // Backup en localStorage
+                localStorage.setItem('badboys_libraries', JSON.stringify(window.libraries));
+                localStorage.setItem('badboys_flashcards', JSON.stringify(window.flashcards));
+                
+                document.getElementById('syncStatus').textContent = '✅ CONECTADO A FIREBASE';
+                window.updateUI();
+            } catch (error) {
+                console.error("Error cargando de Firebase:", error);
+                document.getElementById('syncStatus').textContent = '⚠️ USANDO MODO LOCAL';
+                // Fallback a localStorage
+                window.libraries = JSON.parse(localStorage.getItem('badboys_libraries')) || [];
+                window.flashcards = JSON.parse(localStorage.getItem('badboys_flashcards')) || [];
+                window.updateUI();
+            }
+        };
+
+        window.saveToFirebase = async function() {
+            try {
+                // Guardar cada biblioteca
+                for (const lib of window.libraries) {
+                    await setDoc(doc(db, "libraries", lib.id), {
+                        name: lib.name
+                    });
                 }
-            };
-            reader.readAsText(file);
-            
-            input.value = '';
-        }
+                
+                // Guardar cada flashcard
+                for (const card of window.flashcards) {
+                    await setDoc(doc(db, "flashcards", card.id), {
+                        libraryId: card.libraryId,
+                        term: card.term,
+                        definition: card.definition
+                    });
+                }
+                
+                // Backup en localStorage
+                localStorage.setItem('badboys_libraries', JSON.stringify(window.libraries));
+                localStorage.setItem('badboys_flashcards', JSON.stringify(window.flashcards));
+                localStorage.setItem('badboys_currentLibrary', window.currentLibrary);
+            } catch (error) {
+                console.error("Error guardando en Firebase:", error);
+            }
+        };
+
+        // Escuchar cambios en tiempo real
+        onSnapshot(collection(db, "libraries"), () => {
+            console.log('Cambios detectados en bibliotecas');
+            window.loadFromFirebase();
+        });
+
+        onSnapshot(collection(db, "flashcards"), () => {
+            console.log('Cambios detectados en flashcards');
+            window.loadFromFirebase();
+        });
 
         // ============ FUNCIONES PRINCIPALES ============
-        function saveData() {
-            localStorage.setItem('badboys_libraries', JSON.stringify(libraries));
-            localStorage.setItem('badboys_flashcards', JSON.stringify(flashcards));
-            localStorage.setItem('badboys_currentLibrary', currentLibrary);
-            updateUI();
-        }
-
-        function createLibrary() {
+        window.createLibrary = async function() {
             const name = document.getElementById('newLibraryName').value.trim();
             if (!name) {
                 alert('🔥 ¡Ponle nombre a la biblioteca, Bad Boy!');
@@ -936,25 +909,43 @@
                 name: name
             };
 
-            libraries.push(newLibrary);
+            window.libraries.push(newLibrary);
             document.getElementById('newLibraryName').value = '';
-            saveData();
-        }
+            
+            // Guardar en Firebase
+            await setDoc(doc(db, "libraries", newLibrary.id), {
+                name: newLibrary.name
+            });
+            
+            window.updateUI();
+        };
 
-        function deleteLibrary(id, event) {
+        window.deleteLibrary = async function(id, event) {
             event.stopPropagation();
             if (confirm('¿Seguro que quieres eliminar esta biblioteca? También se borrarán sus flashcards.')) {
-                libraries = libraries.filter(lib => lib.id !== id);
-                flashcards = flashcards.filter(card => card.libraryId !== id);
                 
-                if (currentLibrary === id) {
-                    currentLibrary = 'all';
+                // Eliminar de Firebase
+                await deleteDoc(doc(db, "libraries", id));
+                
+                // Eliminar flashcards asociadas
+                const cardsToDelete = window.flashcards.filter(c => c.libraryId === id);
+                for (const card of cardsToDelete) {
+                    await deleteDoc(doc(db, "flashcards", card.id));
                 }
-                saveData();
+                
+                window.libraries = window.libraries.filter(lib => lib.id !== id);
+                window.flashcards = window.flashcards.filter(card => card.libraryId !== id);
+                
+                if (window.currentLibrary === id) {
+                    window.currentLibrary = 'all';
+                    localStorage.setItem('badboys_currentLibrary', 'all');
+                }
+                
+                window.updateUI();
             }
-        }
+        };
 
-        function addFlashcard() {
+        window.addFlashcard = async function() {
             const libraryId = document.getElementById('librarySelect').value;
             const term = document.getElementById('termInput').value.trim();
             const definition = document.getElementById('definitionInput').value.trim();
@@ -976,32 +967,40 @@
                 definition: definition
             };
 
-            flashcards.push(newCard);
+            window.flashcards.push(newCard);
             document.getElementById('termInput').value = '';
             document.getElementById('definitionInput').value = '';
             
-            if (currentLibrary === libraryId) {
-                updateStudyMode();
+            // Guardar en Firebase
+            await setDoc(doc(db, "flashcards", newCard.id), {
+                libraryId: libraryId,
+                term: term,
+                definition: definition
+            });
+            
+            if (window.currentLibrary === libraryId) {
+                window.updateStudyMode();
             }
             
-            saveData();
-        }
+            window.updateUI();
+        };
 
-        function deleteFlashcard(id, event) {
+        window.deleteFlashcard = async function(id, event) {
             event.stopPropagation();
             if (confirm('¿Eliminar esta flashcard?')) {
-                flashcards = flashcards.filter(card => card.id !== id);
+                await deleteDoc(doc(db, "flashcards", id));
+                window.flashcards = window.flashcards.filter(card => card.id !== id);
                 
-                if (studyCards.length > 0 && currentStudyIndex >= studyCards.length) {
-                    currentStudyIndex = Math.max(0, studyCards.length - 1);
+                if (window.studyCards.length > 0 && window.currentStudyIndex >= window.studyCards.length) {
+                    window.currentStudyIndex = Math.max(0, window.studyCards.length - 1);
                 }
                 
-                saveData();
+                window.updateUI();
             }
-        }
+        };
 
         // ============ FUNCIÓN DE PARSEO ============
-        function parseLineToFlashcard(line) {
+        window.parseLineToFlashcard = function(line) {
             line = line.trim();
             if (!line) return null;
 
@@ -1025,10 +1024,10 @@
             }
 
             return null;
-        }
+        };
 
         // ============ FUNCIONES DE PEGADO DIRECTO ============
-        function previewPastedText() {
+        window.previewPastedText = function() {
             const text = document.getElementById('pasteTextarea').value;
             if (!text.trim()) {
                 alert('🔥 ¡Pega algún texto primero!');
@@ -1037,15 +1036,15 @@
 
             const lines = text.split('\n');
             const previewLines = [];
-            currentPasteData = [];
+            window.currentPasteData = [];
 
             for (let i = 0; i < lines.length; i++) {
                 const line = lines[i].trim();
                 if (line) {
-                    const parsed = parseLineToFlashcard(line);
+                    const parsed = window.parseLineToFlashcard(line);
                     if (parsed) {
                         previewLines.push(`📌 ${parsed.term.substring(0, 50)}${parsed.term.length > 50 ? '...' : ''} → ${parsed.definition.substring(0, 50)}${parsed.definition.length > 50 ? '...' : ''}`);
-                        currentPasteData.push(parsed);
+                        window.currentPasteData.push(parsed);
                     }
                 }
             }
@@ -1054,29 +1053,29 @@
             preview.style.display = 'block';
             preview.innerHTML = previewLines.map(l => `<div class="preview-item">${l}</div>`).join('');
             
-            document.getElementById('importPasteBtn').disabled = currentPasteData.length === 0;
+            document.getElementById('importPasteBtn').disabled = window.currentPasteData.length === 0;
             
-            if (currentPasteData.length > 0) {
-                showMessage(`✅ Se detectaron ${currentPasteData.length} flashcards`, 'success');
+            if (window.currentPasteData.length > 0) {
+                window.showMessage(`✅ Se detectaron ${window.currentPasteData.length} flashcards`, 'success');
             } else {
-                showMessage('❌ No se pudo detectar ningún formato válido', 'error');
+                window.showMessage('❌ No se pudo detectar ningún formato válido', 'error');
             }
-        }
+        };
 
-        function importPastedText() {
+        window.importPastedText = async function() {
             const libraryId = document.getElementById('pasteLibrarySelect').value;
             if (!libraryId) {
                 alert('🔥 ¡Selecciona una biblioteca destino!');
                 return;
             }
 
-            if (currentPasteData.length === 0) {
+            if (window.currentPasteData.length === 0) {
                 alert('🔥 No hay datos para importar');
                 return;
             }
 
             let imported = 0;
-            for (let item of currentPasteData) {
+            for (let item of window.currentPasteData) {
                 if (item.term && item.definition) {
                     const newCard = {
                         id: Date.now() + Math.random().toString(),
@@ -1084,27 +1083,32 @@
                         term: item.term,
                         definition: item.definition
                     };
-                    flashcards.push(newCard);
+                    window.flashcards.push(newCard);
+                    await setDoc(doc(db, "flashcards", newCard.id), {
+                        libraryId: libraryId,
+                        term: item.term,
+                        definition: item.definition
+                    });
                     imported++;
                 }
             }
 
-            showMessage(`✅ ¡${imported} flashcards importadas desde texto!`, 'success');
+            window.showMessage(`✅ ¡${imported} flashcards importadas desde texto!`, 'success');
             
             document.getElementById('pasteTextarea').value = '';
             document.getElementById('pastePreview').style.display = 'none';
             document.getElementById('importPasteBtn').disabled = true;
-            currentPasteData = [];
+            window.currentPasteData = [];
             
-            if (currentLibrary === libraryId) {
-                updateStudyMode();
+            if (window.currentLibrary === libraryId) {
+                window.updateStudyMode();
             }
             
-            saveData();
-        }
+            window.updateUI();
+        };
 
         // ============ FUNCIONES DE CARGA DE ARCHIVOS ============
-        function previewCSV(input) {
+        window.previewCSV = function(input) {
             const file = input.files[0];
             if (!file) return;
 
@@ -1113,7 +1117,7 @@
                 const content = e.target.result;
                 const lines = content.split('\n');
                 const previewLines = [];
-                currentCSVData = [];
+                window.currentCSVData = [];
 
                 for (let i = 0; i < lines.length; i++) {
                     const line = lines[i].trim();
@@ -1126,7 +1130,7 @@
                                 continue;
                             }
                             previewLines.push(`📌 ${parts[0].substring(0, 50)} → ${parts[1].substring(0, 50)}`);
-                            currentCSVData.push({
+                            window.currentCSVData.push({
                                 term: parts[0],
                                 definition: parts[1]
                             });
@@ -1138,26 +1142,26 @@
                 preview.style.display = 'block';
                 preview.innerHTML = previewLines.map(l => `<div class="preview-item">${l}</div>`).join('');
                 
-                document.getElementById('importCSVBtn').disabled = currentCSVData.length === 0;
-                showMessage(`✅ Se detectaron ${currentCSVData.length} flashcards en CSV`, 'success');
+                document.getElementById('importCSVBtn').disabled = window.currentCSVData.length === 0;
+                window.showMessage(`✅ Se detectaron ${window.currentCSVData.length} flashcards en CSV`, 'success');
             };
             reader.readAsText(file);
-        }
+        };
 
-        function importCSV() {
+        window.importCSV = async function() {
             const libraryId = document.getElementById('csvLibrarySelect').value;
             if (!libraryId) {
                 alert('🔥 ¡Selecciona una biblioteca destino!');
                 return;
             }
 
-            if (currentCSVData.length === 0) {
+            if (window.currentCSVData.length === 0) {
                 alert('🔥 No hay datos para importar');
                 return;
             }
 
             let imported = 0;
-            for (let item of currentCSVData) {
+            for (let item of window.currentCSVData) {
                 if (item.term && item.definition) {
                     const newCard = {
                         id: Date.now() + Math.random().toString(),
@@ -1165,26 +1169,31 @@
                         term: item.term,
                         definition: item.definition
                     };
-                    flashcards.push(newCard);
+                    window.flashcards.push(newCard);
+                    await setDoc(doc(db, "flashcards", newCard.id), {
+                        libraryId: libraryId,
+                        term: item.term,
+                        definition: item.definition
+                    });
                     imported++;
                 }
             }
 
-            showMessage(`✅ ¡${imported} flashcards importadas desde CSV!`, 'success');
+            window.showMessage(`✅ ¡${imported} flashcards importadas desde CSV!`, 'success');
             
             document.getElementById('csvFile').value = '';
             document.getElementById('csvPreview').style.display = 'none';
             document.getElementById('importCSVBtn').disabled = true;
-            currentCSVData = [];
+            window.currentCSVData = [];
             
-            if (currentLibrary === libraryId) {
-                updateStudyMode();
+            if (window.currentLibrary === libraryId) {
+                window.updateStudyMode();
             }
             
-            saveData();
-        }
+            window.updateUI();
+        };
 
-        function previewTXT(input) {
+        window.previewTXT = function(input) {
             const file = input.files[0];
             if (!file) return;
 
@@ -1193,15 +1202,15 @@
                 const content = e.target.result;
                 const lines = content.split('\n');
                 const previewLines = [];
-                currentTXTData = [];
+                window.currentTXTData = [];
 
                 for (let i = 0; i < lines.length; i++) {
                     const line = lines[i].trim();
                     if (line) {
-                        const parsed = parseLineToFlashcard(line);
+                        const parsed = window.parseLineToFlashcard(line);
                         if (parsed) {
                             previewLines.push(`📌 ${parsed.term.substring(0, 50)} → ${parsed.definition.substring(0, 50)}`);
-                            currentTXTData.push(parsed);
+                            window.currentTXTData.push(parsed);
                         }
                     }
                 }
@@ -1210,26 +1219,26 @@
                 preview.style.display = 'block';
                 preview.innerHTML = previewLines.map(l => `<div class="preview-item">${l}</div>`).join('');
                 
-                document.getElementById('importTXTBtn').disabled = currentTXTData.length === 0;
-                showMessage(`✅ Se detectaron ${currentTXTData.length} flashcards en TXT`, 'success');
+                document.getElementById('importTXTBtn').disabled = window.currentTXTData.length === 0;
+                window.showMessage(`✅ Se detectaron ${window.currentTXTData.length} flashcards en TXT`, 'success');
             };
             reader.readAsText(file);
-        }
+        };
 
-        function importTXT() {
+        window.importTXT = async function() {
             const libraryId = document.getElementById('txtLibrarySelect').value;
             if (!libraryId) {
                 alert('🔥 ¡Selecciona una biblioteca destino!');
                 return;
             }
 
-            if (currentTXTData.length === 0) {
+            if (window.currentTXTData.length === 0) {
                 alert('🔥 No hay datos para importar');
                 return;
             }
 
             let imported = 0;
-            for (let item of currentTXTData) {
+            for (let item of window.currentTXTData) {
                 if (item.term && item.definition) {
                     const newCard = {
                         id: Date.now() + Math.random().toString(),
@@ -1237,26 +1246,31 @@
                         term: item.term,
                         definition: item.definition
                     };
-                    flashcards.push(newCard);
+                    window.flashcards.push(newCard);
+                    await setDoc(doc(db, "flashcards", newCard.id), {
+                        libraryId: libraryId,
+                        term: item.term,
+                        definition: item.definition
+                    });
                     imported++;
                 }
             }
 
-            showMessage(`✅ ¡${imported} flashcards importadas desde TXT!`, 'success');
+            window.showMessage(`✅ ¡${imported} flashcards importadas desde TXT!`, 'success');
             
             document.getElementById('txtFile').value = '';
             document.getElementById('txtPreview').style.display = 'none';
             document.getElementById('importTXTBtn').disabled = true;
-            currentTXTData = [];
+            window.currentTXTData = [];
             
-            if (currentLibrary === libraryId) {
-                updateStudyMode();
+            if (window.currentLibrary === libraryId) {
+                window.updateStudyMode();
             }
             
-            saveData();
-        }
+            window.updateUI();
+        };
 
-        function showMessage(text, type) {
+        window.showMessage = function(text, type) {
             const msg = document.getElementById('uploadMessage');
             msg.style.display = 'block';
             msg.textContent = text;
@@ -1267,64 +1281,63 @@
             setTimeout(() => {
                 msg.style.display = 'none';
             }, 5000);
-        }
+        };
 
         // ============ FUNCIONES DE ESTUDIO ============
-        function selectLibrary(id) {
-            currentLibrary = id;
-            currentStudyIndex = 0;
+        window.selectLibrary = function(id) {
+            window.currentLibrary = id;
+            window.currentStudyIndex = 0;
             document.getElementById('activeLibrarySelect').value = id;
+            localStorage.setItem('badboys_currentLibrary', id);
             
             if (id !== 'all' && id !== '') {
                 document.getElementById('studyMode').style.display = 'block';
-                updateStudyMode();
+                window.updateStudyMode();
             } else {
                 document.getElementById('studyMode').style.display = 'none';
             }
-            
-            saveData();
-        }
+        };
 
-        function updateStudyMode() {
-            studyCards = flashcards.filter(card => card.libraryId === currentLibrary);
-            shuffleArray(studyCards);
+        window.updateStudyMode = function() {
+            window.studyCards = window.flashcards.filter(card => card.libraryId === window.currentLibrary);
+            window.shuffleArray(window.studyCards);
             
-            const library = libraries.find(l => l.id === currentLibrary);
+            const library = window.libraries.find(l => l.id === window.currentLibrary);
             if (library) {
                 document.getElementById('currentLibraryTitle').textContent = library.name.toUpperCase();
             }
             
-            updateStudyCard();
-            updateMiniFlashcards();
-            updateNavigationButtons();
-        }
+            window.updateStudyCard();
+            window.updateMiniFlashcards();
+            window.updateNavigationButtons();
+        };
 
-        function shuffleArray(array) {
+        window.shuffleArray = function(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [array[i], array[j]] = [array[j], array[i]];
             }
-        }
+        };
 
-        function shuffleCurrentLibrary() {
-            shuffleArray(studyCards);
-            currentStudyIndex = 0;
+        window.shuffleCurrentLibrary = function() {
+            window.shuffleArray(window.studyCards);
+            window.currentStudyIndex = 0;
             document.getElementById('studyCard').classList.remove('flipped');
-            updateStudyCard();
-            updateMiniFlashcards();
-            updateNavigationButtons();
-        }
+            window.updateStudyCard();
+            window.updateMiniFlashcards();
+            window.updateNavigationButtons();
+        };
 
-        function updateStudyCard() {
-            if (studyCards.length > 0 && currentStudyIndex < studyCards.length) {
-                const card = studyCards[currentStudyIndex];
+        window.updateStudyCard = function() {
+            if (window.studyCards.length > 0 && window.currentStudyIndex < window.studyCards.length) {
+                const card = window.studyCards[window.currentStudyIndex];
                 document.getElementById('studyTerm').textContent = card.term;
                 document.getElementById('studyDefinition').textContent = card.definition;
                 document.getElementById('studyProgress').textContent = 
-                    `${currentStudyIndex + 1}/${studyCards.length}`;
+                    `${window.currentStudyIndex + 1}/${window.studyCards.length}`;
                 
                 document.querySelectorAll('.mini-flashcard').forEach((el, index) => {
-                    if (index === currentStudyIndex) {
+                    if (index === window.currentStudyIndex) {
                         el.classList.add('active');
                     } else {
                         el.classList.remove('active');
@@ -1335,60 +1348,60 @@
                 document.getElementById('studyDefinition').textContent = 'Agrega flashcards a esta biblioteca';
                 document.getElementById('studyProgress').textContent = '0/0';
             }
-        }
+        };
 
-        function updateMiniFlashcards() {
+        window.updateMiniFlashcards = function() {
             const container = document.getElementById('miniFlashcardsGrid');
             container.innerHTML = '';
             
-            studyCards.forEach((card, index) => {
+            window.studyCards.forEach((card, index) => {
                 const miniCard = document.createElement('div');
-                miniCard.className = `mini-flashcard ${index === currentStudyIndex ? 'active' : ''}`;
-                miniCard.onclick = () => goToCard(index);
+                miniCard.className = `mini-flashcard ${index === window.currentStudyIndex ? 'active' : ''}`;
+                miniCard.onclick = () => window.goToCard(index);
                 miniCard.innerHTML = `
                     <div>${card.term.substring(0, 20)}${card.term.length > 20 ? '...' : ''}</div>
                     <button class="delete-btn" onclick="deleteFlashcard('${card.id}', event)">×</button>
                 `;
                 container.appendChild(miniCard);
             });
-        }
+        };
 
-        function goToCard(index) {
-            currentStudyIndex = index;
+        window.goToCard = function(index) {
+            window.currentStudyIndex = index;
             document.getElementById('studyCard').classList.remove('flipped');
-            updateStudyCard();
-            updateNavigationButtons();
-        }
+            window.updateStudyCard();
+            window.updateNavigationButtons();
+        };
 
-        function nextCard() {
-            if (currentStudyIndex < studyCards.length - 1) {
-                currentStudyIndex++;
+        window.nextCard = function() {
+            if (window.currentStudyIndex < window.studyCards.length - 1) {
+                window.currentStudyIndex++;
                 document.getElementById('studyCard').classList.remove('flipped');
-                updateStudyCard();
-                updateNavigationButtons();
+                window.updateStudyCard();
+                window.updateNavigationButtons();
             }
-        }
+        };
 
-        function previousCard() {
-            if (currentStudyIndex > 0) {
-                currentStudyIndex--;
+        window.previousCard = function() {
+            if (window.currentStudyIndex > 0) {
+                window.currentStudyIndex--;
                 document.getElementById('studyCard').classList.remove('flipped');
-                updateStudyCard();
-                updateNavigationButtons();
+                window.updateStudyCard();
+                window.updateNavigationButtons();
             }
-        }
+        };
 
-        function flipStudyCard() {
+        window.flipStudyCard = function() {
             document.getElementById('studyCard').classList.toggle('flipped');
-        }
+        };
 
-        function updateNavigationButtons() {
-            document.getElementById('prevButton').disabled = currentStudyIndex === 0;
-            document.getElementById('nextButton').disabled = currentStudyIndex === studyCards.length - 1;
-        }
+        window.updateNavigationButtons = function() {
+            document.getElementById('prevButton').disabled = window.currentStudyIndex === 0;
+            document.getElementById('nextButton').disabled = window.currentStudyIndex === window.studyCards.length - 1;
+        };
 
         // ============ FUNCIÓN DE ACTUALIZACIÓN UI ============
-        function updateUI() {
+        window.updateUI = function() {
             // Actualizar selects de bibliotecas
             const selects = ['librarySelect', 'activeLibrarySelect', 'csvLibrarySelect', 'txtLibrarySelect', 'pasteLibrarySelect'];
             
@@ -1400,7 +1413,7 @@
                         ? '<option value="all">Todas las bibliotecas</option>'
                         : '<option value="">Selecciona una biblioteca</option>';
 
-                    libraries.forEach(lib => {
+                    window.libraries.forEach(lib => {
                         const option = document.createElement('option');
                         option.value = lib.id;
                         option.textContent = lib.name;
@@ -1417,11 +1430,11 @@
             const librariesContainer = document.getElementById('librariesContainer');
             librariesContainer.innerHTML = '';
             
-            libraries.forEach(lib => {
-                const cardCount = flashcards.filter(f => f.libraryId === lib.id).length;
+            window.libraries.forEach(lib => {
+                const cardCount = window.flashcards.filter(f => f.libraryId === lib.id).length;
                 const div = document.createElement('div');
-                div.className = `library-item ${currentLibrary === lib.id ? 'active' : ''}`;
-                div.onclick = () => selectLibrary(lib.id);
+                div.className = `library-item ${window.currentLibrary === lib.id ? 'active' : ''}`;
+                div.onclick = () => window.selectLibrary(lib.id);
                 div.innerHTML = `
                     <span class="library-name">${lib.name}</span>
                     <span class="library-count">${cardCount}</span>
@@ -1431,16 +1444,16 @@
             });
 
             // Actualizar modo estudio
-            if (currentLibrary !== 'all' && currentLibrary !== '') {
+            if (window.currentLibrary !== 'all' && window.currentLibrary !== '') {
                 document.getElementById('studyMode').style.display = 'block';
-                updateStudyMode();
+                window.updateStudyMode();
             } else {
                 document.getElementById('studyMode').style.display = 'none';
             }
-        }
+        };
 
         // Inicializar
-        updateUI();
+        window.loadFromFirebase();
     </script>
 </body>
 </html>
