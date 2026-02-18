@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FLASH BAD BOYS - CARGA INTELIGENTE</title>
+    <title>FLASH BAD BOYS - VERSIÓN ESTABLE</title>
     <style>
         * {
             margin: 0;
@@ -23,7 +23,6 @@
             overflow-x: hidden;
         }
 
-        /* Efectos de luz neon */
         body::before {
             content: '';
             position: absolute;
@@ -107,7 +106,51 @@
             margin-bottom: 20px;
         }
 
-        /* Sección de creación manual */
+        .sync-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .sync-button {
+            background: transparent;
+            border: 2px solid #00f7ff;
+            color: #00f7ff;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 0 20px rgba(0, 247, 255, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sync-button:hover {
+            background: #00f7ff;
+            color: black;
+            box-shadow: 0 0 40px #00f7ff;
+            transform: translateY(-3px);
+        }
+
+        .sync-button.export {
+            border-color: #ffb800;
+            color: #ffb800;
+            box-shadow: 0 0 20px rgba(255, 184, 0, 0.3);
+        }
+
+        .sync-button.export:hover {
+            background: #ffb800;
+            color: black;
+            box-shadow: 0 0 40px #ffb800;
+        }
+
         .creator-section {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -120,7 +163,6 @@
             box-shadow: inset 0 0 50px rgba(255, 0, 193, 0.1), 0 0 30px rgba(0, 247, 255, 0.3);
         }
 
-        /* Sección de carga masiva MEJORADA */
         .batch-upload-section {
             background: rgba(255, 184, 0, 0.05);
             border-radius: 30px;
@@ -142,7 +184,6 @@
             gap: 15px;
         }
 
-        /* Área de pegado directo */
         .paste-area {
             background: rgba(0, 0, 0, 0.7);
             border-radius: 20px;
@@ -375,7 +416,6 @@
             100% { opacity: 1; }
         }
 
-        /* Resto de estilos */
         .libraries-section {
             background: rgba(0, 247, 255, 0.05);
             border-radius: 30px;
@@ -638,23 +678,42 @@
         .delete-btn:hover {
             background: rgba(255, 0, 0, 0.8);
         }
+
+        .hidden {
+            display: none !important;
+        }
+
+        #importFile {
+            display: none;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>⚡ BAD BOYS SMART LOAD ⚡</h1>
+        <h1>⚡ BAD BOYS FLASHCARDS ⚡</h1>
         <div style="text-align: center; margin-bottom: 30px;">
-            <span class="badge">CARGA INTELIGENTE - DETECTA MÚLTIPLES FORMATOS</span>
+            <span class="badge">VERSIÓN ESTABLE - SINCRONIZACIÓN MANUAL</span>
         </div>
 
-        <!-- Sección de carga masiva MEJORADA -->
+        <!-- Botones de sincronización -->
+        <div class="sync-buttons">
+            <button class="sync-button export" onclick="exportData()">
+                📤 EXPORTAR FLASHCARDS
+            </button>
+            <button class="sync-button" onclick="document.getElementById('importFile').click()">
+                📥 IMPORTAR FLASHCARDS
+            </button>
+        </div>
+        <input type="file" id="importFile" accept=".json" onchange="importData(this)">
+
+        <!-- Sección de carga masiva -->
         <div class="batch-upload-section">
             <div class="upload-title">
                 <span>📂 CARGA MASIVA DE FLASHCARDS</span>
                 <span style="font-size: 1rem; color: #00f7ff;">PEGA TEXTO O SUBE ARCHIVOS</span>
             </div>
             
-            <!-- ÁREA DE PEGADO DIRECTO - NUEVO -->
+            <!-- ÁREA DE PEGADO DIRECTO -->
             <div class="paste-area">
                 <h4>📋 PEGA TUS FLASHCARDS AQUÍ</h4>
                 <div class="format-example">
@@ -665,8 +724,7 @@
                     • "Pregunta","Respuesta"<br><br>
                     <strong>Ejemplo de tu texto:</strong><br>
                     ¿SHA-256 es cifrado o hashing? | Es hashing, porque es una función unidireccional que no permite recuperar el valor original.<br>
-                    ¿Qué problema tiene guardar contraseñas solo con SHA-256? | Es vulnerable a ataques de fuerza bruta y rainbow tables si no se usa salt.<br>
-                    Diferencia entre cifrado simétrico y asimétrico | Simétrico usa una sola clave para cifrar y descifrar; asimétrico usa clave pública y privada.
+                    ¿Qué problema tiene guardar contraseñas solo con SHA-256? | Es vulnerable a ataques de fuerza bruta y rainbow tables si no se usa salt.
                 </div>
                 <textarea id="pasteTextarea" class="paste-textarea" placeholder="Pega aquí tus flashcards (una por línea)"></textarea>
                 <select id="pasteLibrarySelect" class="library-selector" style="margin: 10px 0; width: 100%;">
@@ -714,24 +772,6 @@
                     </select>
                     <button class="neon-button small" onclick="importTXT()" id="importTXTBtn" disabled>IMPORTAR TXT</button>
                     <div id="txtPreview" class="preview-area" style="display: none;"></div>
-                </div>
-
-                <!-- Tarjeta para WORD -->
-                <div class="upload-card">
-                    <h4>📄 ARCHIVO WORD</h4>
-                    <div class="format-info">
-                        <strong>Formato:</strong> Tabla de 2 columnas<br>
-                        <strong>Ejemplo:</strong> Tabla en Word con término y definición
-                    </div>
-                    <div class="file-input-container">
-                        <input type="file" id="wordFile" class="file-input" accept=".doc,.docx" onchange="previewWORD(this)">
-                        <label for="wordFile" class="file-label">📎 SELECCIONAR WORD</label>
-                    </div>
-                    <select id="wordLibrarySelect" class="library-selector" style="margin: 10px 0;">
-                        <option value="">Selecciona biblioteca destino</option>
-                    </select>
-                    <button class="neon-button small" onclick="importWORD()" id="importWORDBtn" disabled>IMPORTAR WORD</button>
-                    <div id="wordPreview" class="preview-area" style="display: none;"></div>
                 </div>
             </div>
 
@@ -800,41 +840,83 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
-    <script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyCpEC9VpbKrn56iYVbLDn7TdB6KIW3060o",
-    authDomain: "estudio-890ee.firebaseapp.com",
-    projectId: "estudio-890ee",
-    storageBucket: "estudio-890ee.firebasestorage.app",
-    messagingSenderId: "296063325492",
-    appId: "1:296063325492:web:e63b0f9bef22a47123c161"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-</script>
+    
     <script>
-        // Datos iniciales
+        // ============ VARIABLES GLOBALES ============
         let libraries = JSON.parse(localStorage.getItem('badboys_libraries')) || [];
         let flashcards = JSON.parse(localStorage.getItem('badboys_flashcards')) || [];
         let currentLibrary = localStorage.getItem('badboys_currentLibrary') || 'all';
         let currentStudyIndex = 0;
         let studyCards = [];
-
-        // Variables para previsualización
+        let currentPasteData = [];
         let currentCSVData = [];
         let currentTXTData = [];
-        let currentWORDData = [];
-        let currentPasteData = [];
 
-        // Guardar datos
+        // ============ FUNCIONES DE EXPORTACIÓN/IMPORTACIÓN ============
+        function exportData() {
+            const data = {
+                libraries: libraries,
+                flashcards: flashcards,
+                fecha: new Date().toISOString(),
+                version: '1.0'
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `flashcards_${new Date().toISOString().slice(0,10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showMessage('✅ Archivo exportado correctamente', 'success');
+        }
+
+        function importData(input) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    if (confirm('¿Quieres COMBINAR con las flashcards existentes?\n\nOK = Combinar\nCancelar = Reemplazar todo')) {
+                        // Combinar
+                        const existingIds = new Set(flashcards.map(f => f.id));
+                        const existingLibIds = new Set(libraries.map(l => l.id));
+                        
+                        data.flashcards.forEach(card => {
+                            if (!existingIds.has(card.id)) {
+                                flashcards.push(card);
+                            }
+                        });
+                        
+                        data.libraries.forEach(lib => {
+                            if (!existingLibIds.has(lib.id)) {
+                                libraries.push(lib);
+                            }
+                        });
+                        
+                        showMessage(`✅ Combinadas: ${data.flashcards.length} flashcards`, 'success');
+                    } else {
+                        // Reemplazar
+                        libraries = data.libraries || [];
+                        flashcards = data.flashcards || [];
+                        showMessage(`✅ Reemplazadas: ${flashcards.length} flashcards`, 'success');
+                    }
+                    
+                    saveData();
+                } catch (error) {
+                    alert('❌ Error al leer el archivo: ' + error.message);
+                }
+            };
+            reader.readAsText(file);
+            
+            input.value = '';
+        }
+
+        // ============ FUNCIONES PRINCIPALES ============
         function saveData() {
             localStorage.setItem('badboys_libraries', JSON.stringify(libraries));
             localStorage.setItem('badboys_flashcards', JSON.stringify(flashcards));
@@ -842,7 +924,6 @@
             updateUI();
         }
 
-        // Crear biblioteca
         function createLibrary() {
             const name = document.getElementById('newLibraryName').value.trim();
             if (!name) {
@@ -860,7 +941,6 @@
             saveData();
         }
 
-        // Eliminar biblioteca
         function deleteLibrary(id, event) {
             event.stopPropagation();
             if (confirm('¿Seguro que quieres eliminar esta biblioteca? También se borrarán sus flashcards.')) {
@@ -874,7 +954,6 @@
             }
         }
 
-        // Agregar flashcard manual
         function addFlashcard() {
             const libraryId = document.getElementById('librarySelect').value;
             const term = document.getElementById('termInput').value.trim();
@@ -908,7 +987,6 @@
             saveData();
         }
 
-        // Eliminar flashcard
         function deleteFlashcard(id, event) {
             event.stopPropagation();
             if (confirm('¿Eliminar esta flashcard?')) {
@@ -922,41 +1000,27 @@
             }
         }
 
-        // ============ FUNCIÓN MEJORADA DE PARSEO ============
+        // ============ FUNCIÓN DE PARSEO ============
         function parseLineToFlashcard(line) {
             line = line.trim();
             if (!line) return null;
 
-            // Detectar múltiples separadores
             const separators = [
-                { pattern: /\s*\|\s*/, name: 'pipe' },        // Pregunta | Respuesta
-                { pattern: /\s*→\s*/, name: 'arrow' },        // Pregunta → Respuesta
-                { pattern: /\s*:\s*/, name: 'colon' },        // Pregunta: Respuesta
-                { pattern: /\s*;\s*/, name: 'semicolon' },    // Pregunta; Respuesta
-                { pattern: /\s*,\s*/, name: 'comma' }         // Pregunta, Respuesta
+                { pattern: /\s*\|\s*/, name: 'pipe' },
+                { pattern: /\s*→\s*/, name: 'arrow' },
+                { pattern: /\s*:\s*/, name: 'colon' },
+                { pattern: /\s*;\s*/, name: 'semicolon' }
             ];
 
-            // Intentar cada separador
             for (let sep of separators) {
                 if (line.match(sep.pattern)) {
                     const parts = line.split(sep.pattern);
                     if (parts.length >= 2) {
                         return {
-                            term: parts[0].trim().replace(/^["']|["']$/g, ''), // Quitar comillas
+                            term: parts[0].trim().replace(/^["']|["']$/g, ''),
                             definition: parts.slice(1).join(sep.pattern).trim().replace(/^["']|["']$/g, '')
                         };
                     }
-                }
-            }
-
-            // Si no hay separador, intentar detectar formato de pregunta común
-            if (line.includes('¿') && line.includes('?')) {
-                const questionMatch = line.match(/^(.*?[?])\s+(.*)$/);
-                if (questionMatch) {
-                    return {
-                        term: questionMatch[1].trim(),
-                        definition: questionMatch[2].trim()
-                    };
                 }
             }
 
@@ -982,8 +1046,6 @@
                     if (parsed) {
                         previewLines.push(`📌 ${parsed.term.substring(0, 50)}${parsed.term.length > 50 ? '...' : ''} → ${parsed.definition.substring(0, 50)}${parsed.definition.length > 50 ? '...' : ''}`);
                         currentPasteData.push(parsed);
-                    } else {
-                        previewLines.push(`⚠️ No se pudo parsear: ${line.substring(0, 50)}...`);
                     }
                 }
             }
@@ -1014,21 +1076,21 @@
             }
 
             let imported = 0;
-            currentPasteData.forEach(item => {
+            for (let item of currentPasteData) {
                 if (item.term && item.definition) {
-                    flashcards.push({
+                    const newCard = {
                         id: Date.now() + Math.random().toString(),
                         libraryId: libraryId,
                         term: item.term,
                         definition: item.definition
-                    });
+                    };
+                    flashcards.push(newCard);
                     imported++;
                 }
-            });
+            }
 
             showMessage(`✅ ¡${imported} flashcards importadas desde texto!`, 'success');
             
-            // Limpiar
             document.getElementById('pasteTextarea').value = '';
             document.getElementById('pastePreview').style.display = 'none';
             document.getElementById('importPasteBtn').disabled = true;
@@ -1042,8 +1104,6 @@
         }
 
         // ============ FUNCIONES DE CARGA DE ARCHIVOS ============
-
-        // Previsualizar CSV
         function previewCSV(input) {
             const file = input.files[0];
             if (!file) return;
@@ -1058,12 +1118,10 @@
                 for (let i = 0; i < lines.length; i++) {
                     const line = lines[i].trim();
                     if (line) {
-                        // Detectar separador CSV
                         const separator = line.includes(';') ? ';' : ',';
                         const parts = line.split(separator).map(p => p.replace(/^["']|["']$/g, '').trim());
                         
                         if (parts.length >= 2) {
-                            // Saltar posible cabecera
                             if (i === 0 && (parts[0].toLowerCase().includes('término') || parts[0].toLowerCase().includes('pregunta'))) {
                                 continue;
                             }
@@ -1086,7 +1144,6 @@
             reader.readAsText(file);
         }
 
-        // Importar CSV
         function importCSV() {
             const libraryId = document.getElementById('csvLibrarySelect').value;
             if (!libraryId) {
@@ -1100,21 +1157,21 @@
             }
 
             let imported = 0;
-            currentCSVData.forEach(item => {
+            for (let item of currentCSVData) {
                 if (item.term && item.definition) {
-                    flashcards.push({
+                    const newCard = {
                         id: Date.now() + Math.random().toString(),
                         libraryId: libraryId,
                         term: item.term,
                         definition: item.definition
-                    });
+                    };
+                    flashcards.push(newCard);
                     imported++;
                 }
-            });
+            }
 
             showMessage(`✅ ¡${imported} flashcards importadas desde CSV!`, 'success');
             
-            // Limpiar
             document.getElementById('csvFile').value = '';
             document.getElementById('csvPreview').style.display = 'none';
             document.getElementById('importCSVBtn').disabled = true;
@@ -1127,7 +1184,6 @@
             saveData();
         }
 
-        // Previsualizar TXT
         function previewTXT(input) {
             const file = input.files[0];
             if (!file) return;
@@ -1160,7 +1216,6 @@
             reader.readAsText(file);
         }
 
-        // Importar TXT
         function importTXT() {
             const libraryId = document.getElementById('txtLibrarySelect').value;
             if (!libraryId) {
@@ -1174,17 +1229,18 @@
             }
 
             let imported = 0;
-            currentTXTData.forEach(item => {
+            for (let item of currentTXTData) {
                 if (item.term && item.definition) {
-                    flashcards.push({
+                    const newCard = {
                         id: Date.now() + Math.random().toString(),
                         libraryId: libraryId,
                         term: item.term,
                         definition: item.definition
-                    });
+                    };
+                    flashcards.push(newCard);
                     imported++;
                 }
-            });
+            }
 
             showMessage(`✅ ¡${imported} flashcards importadas desde TXT!`, 'success');
             
@@ -1200,91 +1256,6 @@
             saveData();
         }
 
-        // Previsualizar WORD
-        function previewWORD(input) {
-            const file = input.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const arrayBuffer = e.target.result;
-                
-                mammoth.extractRawText({ arrayBuffer: arrayBuffer })
-                    .then(function(result) {
-                        const text = result.value;
-                        const lines = text.split('\n');
-                        const previewLines = [];
-                        currentWORDData = [];
-
-                        for (let i = 0; i < lines.length; i++) {
-                            const line = lines[i].trim();
-                            if (line) {
-                                const parsed = parseLineToFlashcard(line);
-                                if (parsed) {
-                                    previewLines.push(`📌 ${parsed.term.substring(0, 50)} → ${parsed.definition.substring(0, 50)}`);
-                                    currentWORDData.push(parsed);
-                                }
-                            }
-                        }
-
-                        const preview = document.getElementById('wordPreview');
-                        preview.style.display = 'block';
-                        preview.innerHTML = previewLines.length > 0 
-                            ? previewLines.map(l => `<div class="preview-item">${l}</div>`).join('')
-                            : '<div class="preview-item">⚠️ No se detectaron flashcards en el documento</div>';
-                        
-                        document.getElementById('importWORDBtn').disabled = currentWORDData.length === 0;
-                        showMessage(`✅ Se detectaron ${currentWORDData.length} flashcards en Word`, 'success');
-                    })
-                    .catch(function(error) {
-                        console.error(error);
-                        alert('Error al leer el archivo Word');
-                    });
-            };
-            reader.readAsArrayBuffer(file);
-        }
-
-        // Importar WORD
-        function importWORD() {
-            const libraryId = document.getElementById('wordLibrarySelect').value;
-            if (!libraryId) {
-                alert('🔥 ¡Selecciona una biblioteca destino!');
-                return;
-            }
-
-            if (currentWORDData.length === 0) {
-                alert('🔥 No hay datos para importar');
-                return;
-            }
-
-            let imported = 0;
-            currentWORDData.forEach(item => {
-                if (item.term && item.definition) {
-                    flashcards.push({
-                        id: Date.now() + Math.random().toString(),
-                        libraryId: libraryId,
-                        term: item.term,
-                        definition: item.definition
-                    });
-                    imported++;
-                }
-            });
-
-            showMessage(`✅ ¡${imported} flashcards importadas desde Word!`, 'success');
-            
-            document.getElementById('wordFile').value = '';
-            document.getElementById('wordPreview').style.display = 'none';
-            document.getElementById('importWORDBtn').disabled = true;
-            currentWORDData = [];
-            
-            if (currentLibrary === libraryId) {
-                updateStudyMode();
-            }
-            
-            saveData();
-        }
-
-        // Mostrar mensajes
         function showMessage(text, type) {
             const msg = document.getElementById('uploadMessage');
             msg.style.display = 'block';
@@ -1299,7 +1270,6 @@
         }
 
         // ============ FUNCIONES DE ESTUDIO ============
-
         function selectLibrary(id) {
             currentLibrary = id;
             currentStudyIndex = 0;
@@ -1353,7 +1323,6 @@
                 document.getElementById('studyProgress').textContent = 
                     `${currentStudyIndex + 1}/${studyCards.length}`;
                 
-                // Actualizar mini flashcards
                 document.querySelectorAll('.mini-flashcard').forEach((el, index) => {
                     if (index === currentStudyIndex) {
                         el.classList.add('active');
@@ -1418,10 +1387,10 @@
             document.getElementById('nextButton').disabled = currentStudyIndex === studyCards.length - 1;
         }
 
-        // Actualizar toda la UI
+        // ============ FUNCIÓN DE ACTUALIZACIÓN UI ============
         function updateUI() {
             // Actualizar selects de bibliotecas
-            const selects = ['librarySelect', 'activeLibrarySelect', 'csvLibrarySelect', 'txtLibrarySelect', 'wordLibrarySelect', 'pasteLibrarySelect'];
+            const selects = ['librarySelect', 'activeLibrarySelect', 'csvLibrarySelect', 'txtLibrarySelect', 'pasteLibrarySelect'];
             
             selects.forEach(selectId => {
                 const select = document.getElementById(selectId);
