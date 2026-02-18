@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FLASH BAD BOYS - SINCRONIZADO</title>
+    <title>FLASH BAD BOYS - CARGA INTELIGENTE</title>
     <style>
         * {
             margin: 0;
@@ -23,6 +23,7 @@
             overflow-x: hidden;
         }
 
+        /* Efectos de luz neon */
         body::before {
             content: '';
             position: absolute;
@@ -106,6 +107,7 @@
             margin-bottom: 20px;
         }
 
+        /* Sección de creación manual */
         .creator-section {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -118,6 +120,7 @@
             box-shadow: inset 0 0 50px rgba(255, 0, 193, 0.1), 0 0 30px rgba(0, 247, 255, 0.3);
         }
 
+        /* Sección de carga masiva MEJORADA */
         .batch-upload-section {
             background: rgba(255, 184, 0, 0.05);
             border-radius: 30px;
@@ -139,6 +142,7 @@
             gap: 15px;
         }
 
+        /* Área de pegado directo */
         .paste-area {
             background: rgba(0, 0, 0, 0.7);
             border-radius: 20px;
@@ -371,6 +375,7 @@
             100% { opacity: 1; }
         }
 
+        /* Resto de estilos */
         .libraries-section {
             background: rgba(0, 247, 255, 0.05);
             border-radius: 30px;
@@ -634,25 +639,22 @@
             background: rgba(255, 0, 0, 0.8);
         }
     </style>
-    <!-- FIREBASE SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
     <div class="container">
-        <h1>⚡ BAD BOYS SINCRONIZADO ⚡</h1>
+        <h1>⚡ BAD BOYS SMART LOAD ⚡</h1>
         <div style="text-align: center; margin-bottom: 30px;">
-            <span class="badge">FIREBASE CLOUD - MISMO DATOS EN TODOS TUS DISPOSITIVOS</span>
+            <span class="badge">CARGA INTELIGENTE - DETECTA MÚLTIPLES FORMATOS</span>
         </div>
 
-        <!-- Sección de carga masiva -->
+        <!-- Sección de carga masiva MEJORADA -->
         <div class="batch-upload-section">
             <div class="upload-title">
                 <span>📂 CARGA MASIVA DE FLASHCARDS</span>
                 <span style="font-size: 1rem; color: #00f7ff;">PEGA TEXTO O SUBE ARCHIVOS</span>
             </div>
             
-            <!-- ÁREA DE PEGADO DIRECTO -->
+            <!-- ÁREA DE PEGADO DIRECTO - NUEVO -->
             <div class="paste-area">
                 <h4>📋 PEGA TUS FLASHCARDS AQUÍ</h4>
                 <div class="format-example">
@@ -663,7 +665,8 @@
                     • "Pregunta","Respuesta"<br><br>
                     <strong>Ejemplo de tu texto:</strong><br>
                     ¿SHA-256 es cifrado o hashing? | Es hashing, porque es una función unidireccional que no permite recuperar el valor original.<br>
-                    ¿Qué problema tiene guardar contraseñas solo con SHA-256? | Es vulnerable a ataques de fuerza bruta y rainbow tables si no se usa salt.
+                    ¿Qué problema tiene guardar contraseñas solo con SHA-256? | Es vulnerable a ataques de fuerza bruta y rainbow tables si no se usa salt.<br>
+                    Diferencia entre cifrado simétrico y asimétrico | Simétrico usa una sola clave para cifrar y descifrar; asimétrico usa clave pública y privada.
                 </div>
                 <textarea id="pasteTextarea" class="paste-textarea" placeholder="Pega aquí tus flashcards (una por línea)"></textarea>
                 <select id="pasteLibrarySelect" class="library-selector" style="margin: 10px 0; width: 100%;">
@@ -798,105 +801,49 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
-    
+    <script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyCpEC9VpbKrn56iYVbLDn7TdB6KIW3060o",
+    authDomain: "estudio-890ee.firebaseapp.com",
+    projectId: "estudio-890ee",
+    storageBucket: "estudio-890ee.firebasestorage.app",
+    messagingSenderId: "296063325492",
+    appId: "1:296063325492:web:e63b0f9bef22a47123c161"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+</script>
     <script>
-        // ============ CONFIGURACIÓN DE FIREBASE ============
-        // TU CONFIGURACIÓN - ¡NO MODIFICAR!
-        const firebaseConfig = {
-            apiKey: "AIzaSyCpEC9VpbKrn56iYVbLDn7TdB6KIW3060o",
-            authDomain: "estudio-890ee.firebaseapp.com",
-            projectId: "estudio-890ee",
-            storageBucket: "estudio-890ee.firebasestorage.app",
-            messagingSenderId: "296063325492",
-            appId: "1:296063325492:web:e63b0f9bef22a47123c161"
-        };
-
-        // Inicializar Firebase
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-
-        // ============ VARIABLES GLOBALES ============
-        let libraries = [];
-        let flashcards = [];
-        let currentLibrary = 'all';
+        // Datos iniciales
+        let libraries = JSON.parse(localStorage.getItem('badboys_libraries')) || [];
+        let flashcards = JSON.parse(localStorage.getItem('badboys_flashcards')) || [];
+        let currentLibrary = localStorage.getItem('badboys_currentLibrary') || 'all';
         let currentStudyIndex = 0;
         let studyCards = [];
+
+        // Variables para previsualización
         let currentCSVData = [];
         let currentTXTData = [];
         let currentWORDData = [];
         let currentPasteData = [];
 
-        // ============ FUNCIONES DE FIREBASE ============
-        async function loadData() {
-            try {
-                console.log('Cargando datos desde Firebase...');
-                
-                // Cargar bibliotecas
-                const libsSnapshot = await db.collection('libraries').get();
-                libraries = [];
-                libsSnapshot.forEach(doc => {
-                    libraries.push({ id: doc.id, ...doc.data() });
-                });
-                
-                // Cargar flashcards
-                const cardsSnapshot = await db.collection('flashcards').get();
-                flashcards = [];
-                cardsSnapshot.forEach(doc => {
-                    flashcards.push({ id: doc.id, ...doc.data() });
-                });
-                
-                // Cargar currentLibrary de localStorage
-                const savedCurrent = localStorage.getItem('badboys_currentLibrary');
-                if (savedCurrent) {
-                    currentLibrary = savedCurrent;
-                }
-                
-                console.log(`✅ Cargadas ${libraries.length} bibliotecas y ${flashcards.length} flashcards`);
-                
-                // Backup en localStorage
-                localStorage.setItem('badboys_libraries', JSON.stringify(libraries));
-                localStorage.setItem('badboys_flashcards', JSON.stringify(flashcards));
-                
-                updateUI();
-            } catch (error) {
-                console.error("Error cargando de Firebase, usando localStorage:", error);
-                // Fallback a localStorage
-                libraries = JSON.parse(localStorage.getItem('badboys_libraries')) || [];
-                flashcards = JSON.parse(localStorage.getItem('badboys_flashcards')) || [];
-                currentLibrary = localStorage.getItem('badboys_currentLibrary') || 'all';
-                updateUI();
-            }
+        // Guardar datos
+        function saveData() {
+            localStorage.setItem('badboys_libraries', JSON.stringify(libraries));
+            localStorage.setItem('badboys_flashcards', JSON.stringify(flashcards));
+            localStorage.setItem('badboys_currentLibrary', currentLibrary);
+            updateUI();
         }
 
-        async function saveToFirebase() {
-            try {
-                const batch = db.batch();
-                
-                // Guardar bibliotecas
-                libraries.forEach(lib => {
-                    const libRef = db.collection('libraries').doc(lib.id);
-                    batch.set(libRef, { name: lib.name });
-                });
-                
-                // Guardar flashcards
-                flashcards.forEach(card => {
-                    const cardRef = db.collection('flashcards').doc(card.id);
-                    batch.set(cardRef, {
-                        libraryId: card.libraryId,
-                        term: card.term,
-                        definition: card.definition
-                    });
-                });
-                
-                await batch.commit();
-                console.log('✅ Datos guardados en Firebase');
-            } catch (error) {
-                console.error("Error guardando en Firebase:", error);
-            }
-        }
-
-        // ============ FUNCIONES PRINCIPALES ============
-        async function createLibrary() {
+        // Crear biblioteca
+        function createLibrary() {
             const name = document.getElementById('newLibraryName').value.trim();
             if (!name) {
                 alert('🔥 ¡Ponle nombre a la biblioteca, Bad Boy!');
@@ -910,41 +857,25 @@
 
             libraries.push(newLibrary);
             document.getElementById('newLibraryName').value = '';
-            
-            // Guardar en Firebase
-            await db.collection('libraries').doc(newLibrary.id).set({
-                name: newLibrary.name
-            });
-            
-            updateUI();
+            saveData();
         }
 
-        async function deleteLibrary(id, event) {
+        // Eliminar biblioteca
+        function deleteLibrary(id, event) {
             event.stopPropagation();
             if (confirm('¿Seguro que quieres eliminar esta biblioteca? También se borrarán sus flashcards.')) {
-                
-                // Eliminar de Firebase
-                await db.collection('libraries').doc(id).delete();
-                
-                // Eliminar flashcards asociadas
-                const cardsToDelete = flashcards.filter(c => c.libraryId === id);
-                for (let card of cardsToDelete) {
-                    await db.collection('flashcards').doc(card.id).delete();
-                }
-                
                 libraries = libraries.filter(lib => lib.id !== id);
                 flashcards = flashcards.filter(card => card.libraryId !== id);
                 
                 if (currentLibrary === id) {
                     currentLibrary = 'all';
-                    localStorage.setItem('badboys_currentLibrary', 'all');
                 }
-                
-                updateUI();
+                saveData();
             }
         }
 
-        async function addFlashcard() {
+        // Agregar flashcard manual
+        function addFlashcard() {
             const libraryId = document.getElementById('librarySelect').value;
             const term = document.getElementById('termInput').value.trim();
             const definition = document.getElementById('definitionInput').value.trim();
@@ -970,59 +901,55 @@
             document.getElementById('termInput').value = '';
             document.getElementById('definitionInput').value = '';
             
-            // Guardar en Firebase
-            await db.collection('flashcards').doc(newCard.id).set({
-                libraryId: libraryId,
-                term: term,
-                definition: definition
-            });
-            
             if (currentLibrary === libraryId) {
                 updateStudyMode();
             }
             
-            updateUI();
+            saveData();
         }
 
-        async function deleteFlashcard(id, event) {
+        // Eliminar flashcard
+        function deleteFlashcard(id, event) {
             event.stopPropagation();
             if (confirm('¿Eliminar esta flashcard?')) {
-                await db.collection('flashcards').doc(id).delete();
                 flashcards = flashcards.filter(card => card.id !== id);
                 
                 if (studyCards.length > 0 && currentStudyIndex >= studyCards.length) {
                     currentStudyIndex = Math.max(0, studyCards.length - 1);
                 }
                 
-                updateUI();
+                saveData();
             }
         }
 
-        // ============ FUNCIÓN DE PARSEO ============
+        // ============ FUNCIÓN MEJORADA DE PARSEO ============
         function parseLineToFlashcard(line) {
             line = line.trim();
             if (!line) return null;
 
+            // Detectar múltiples separadores
             const separators = [
-                { pattern: /\s*\|\s*/, name: 'pipe' },
-                { pattern: /\s*→\s*/, name: 'arrow' },
-                { pattern: /\s*:\s*/, name: 'colon' },
-                { pattern: /\s*;\s*/, name: 'semicolon' },
-                { pattern: /\s*,\s*/, name: 'comma' }
+                { pattern: /\s*\|\s*/, name: 'pipe' },        // Pregunta | Respuesta
+                { pattern: /\s*→\s*/, name: 'arrow' },        // Pregunta → Respuesta
+                { pattern: /\s*:\s*/, name: 'colon' },        // Pregunta: Respuesta
+                { pattern: /\s*;\s*/, name: 'semicolon' },    // Pregunta; Respuesta
+                { pattern: /\s*,\s*/, name: 'comma' }         // Pregunta, Respuesta
             ];
 
+            // Intentar cada separador
             for (let sep of separators) {
                 if (line.match(sep.pattern)) {
                     const parts = line.split(sep.pattern);
                     if (parts.length >= 2) {
                         return {
-                            term: parts[0].trim().replace(/^["']|["']$/g, ''),
+                            term: parts[0].trim().replace(/^["']|["']$/g, ''), // Quitar comillas
                             definition: parts.slice(1).join(sep.pattern).trim().replace(/^["']|["']$/g, '')
                         };
                     }
                 }
             }
 
+            // Si no hay separador, intentar detectar formato de pregunta común
             if (line.includes('¿') && line.includes('?')) {
                 const questionMatch = line.match(/^(.*?[?])\s+(.*)$/);
                 if (questionMatch) {
@@ -1074,7 +1001,7 @@
             }
         }
 
-        async function importPastedText() {
+        function importPastedText() {
             const libraryId = document.getElementById('pasteLibrarySelect').value;
             if (!libraryId) {
                 alert('🔥 ¡Selecciona una biblioteca destino!');
@@ -1087,26 +1014,21 @@
             }
 
             let imported = 0;
-            for (let item of currentPasteData) {
+            currentPasteData.forEach(item => {
                 if (item.term && item.definition) {
-                    const newCard = {
+                    flashcards.push({
                         id: Date.now() + Math.random().toString(),
-                        libraryId: libraryId,
-                        term: item.term,
-                        definition: item.definition
-                    };
-                    flashcards.push(newCard);
-                    await db.collection('flashcards').doc(newCard.id).set({
                         libraryId: libraryId,
                         term: item.term,
                         definition: item.definition
                     });
                     imported++;
                 }
-            }
+            });
 
             showMessage(`✅ ¡${imported} flashcards importadas desde texto!`, 'success');
             
+            // Limpiar
             document.getElementById('pasteTextarea').value = '';
             document.getElementById('pastePreview').style.display = 'none';
             document.getElementById('importPasteBtn').disabled = true;
@@ -1116,10 +1038,12 @@
                 updateStudyMode();
             }
             
-            updateUI();
+            saveData();
         }
 
         // ============ FUNCIONES DE CARGA DE ARCHIVOS ============
+
+        // Previsualizar CSV
         function previewCSV(input) {
             const file = input.files[0];
             if (!file) return;
@@ -1134,10 +1058,12 @@
                 for (let i = 0; i < lines.length; i++) {
                     const line = lines[i].trim();
                     if (line) {
+                        // Detectar separador CSV
                         const separator = line.includes(';') ? ';' : ',';
                         const parts = line.split(separator).map(p => p.replace(/^["']|["']$/g, '').trim());
                         
                         if (parts.length >= 2) {
+                            // Saltar posible cabecera
                             if (i === 0 && (parts[0].toLowerCase().includes('término') || parts[0].toLowerCase().includes('pregunta'))) {
                                 continue;
                             }
@@ -1160,7 +1086,8 @@
             reader.readAsText(file);
         }
 
-        async function importCSV() {
+        // Importar CSV
+        function importCSV() {
             const libraryId = document.getElementById('csvLibrarySelect').value;
             if (!libraryId) {
                 alert('🔥 ¡Selecciona una biblioteca destino!');
@@ -1173,26 +1100,21 @@
             }
 
             let imported = 0;
-            for (let item of currentCSVData) {
+            currentCSVData.forEach(item => {
                 if (item.term && item.definition) {
-                    const newCard = {
+                    flashcards.push({
                         id: Date.now() + Math.random().toString(),
-                        libraryId: libraryId,
-                        term: item.term,
-                        definition: item.definition
-                    };
-                    flashcards.push(newCard);
-                    await db.collection('flashcards').doc(newCard.id).set({
                         libraryId: libraryId,
                         term: item.term,
                         definition: item.definition
                     });
                     imported++;
                 }
-            }
+            });
 
             showMessage(`✅ ¡${imported} flashcards importadas desde CSV!`, 'success');
             
+            // Limpiar
             document.getElementById('csvFile').value = '';
             document.getElementById('csvPreview').style.display = 'none';
             document.getElementById('importCSVBtn').disabled = true;
@@ -1202,9 +1124,10 @@
                 updateStudyMode();
             }
             
-            updateUI();
+            saveData();
         }
 
+        // Previsualizar TXT
         function previewTXT(input) {
             const file = input.files[0];
             if (!file) return;
@@ -1237,7 +1160,8 @@
             reader.readAsText(file);
         }
 
-        async function importTXT() {
+        // Importar TXT
+        function importTXT() {
             const libraryId = document.getElementById('txtLibrarySelect').value;
             if (!libraryId) {
                 alert('🔥 ¡Selecciona una biblioteca destino!');
@@ -1250,23 +1174,17 @@
             }
 
             let imported = 0;
-            for (let item of currentTXTData) {
+            currentTXTData.forEach(item => {
                 if (item.term && item.definition) {
-                    const newCard = {
+                    flashcards.push({
                         id: Date.now() + Math.random().toString(),
-                        libraryId: libraryId,
-                        term: item.term,
-                        definition: item.definition
-                    };
-                    flashcards.push(newCard);
-                    await db.collection('flashcards').doc(newCard.id).set({
                         libraryId: libraryId,
                         term: item.term,
                         definition: item.definition
                     });
                     imported++;
                 }
-            }
+            });
 
             showMessage(`✅ ¡${imported} flashcards importadas desde TXT!`, 'success');
             
@@ -1279,9 +1197,10 @@
                 updateStudyMode();
             }
             
-            updateUI();
+            saveData();
         }
 
+        // Previsualizar WORD
         function previewWORD(input) {
             const file = input.files[0];
             if (!file) return;
@@ -1325,7 +1244,8 @@
             reader.readAsArrayBuffer(file);
         }
 
-        async function importWORD() {
+        // Importar WORD
+        function importWORD() {
             const libraryId = document.getElementById('wordLibrarySelect').value;
             if (!libraryId) {
                 alert('🔥 ¡Selecciona una biblioteca destino!');
@@ -1338,23 +1258,17 @@
             }
 
             let imported = 0;
-            for (let item of currentWORDData) {
+            currentWORDData.forEach(item => {
                 if (item.term && item.definition) {
-                    const newCard = {
+                    flashcards.push({
                         id: Date.now() + Math.random().toString(),
-                        libraryId: libraryId,
-                        term: item.term,
-                        definition: item.definition
-                    };
-                    flashcards.push(newCard);
-                    await db.collection('flashcards').doc(newCard.id).set({
                         libraryId: libraryId,
                         term: item.term,
                         definition: item.definition
                     });
                     imported++;
                 }
-            }
+            });
 
             showMessage(`✅ ¡${imported} flashcards importadas desde Word!`, 'success');
             
@@ -1367,9 +1281,10 @@
                 updateStudyMode();
             }
             
-            updateUI();
+            saveData();
         }
 
+        // Mostrar mensajes
         function showMessage(text, type) {
             const msg = document.getElementById('uploadMessage');
             msg.style.display = 'block';
@@ -1384,11 +1299,11 @@
         }
 
         // ============ FUNCIONES DE ESTUDIO ============
+
         function selectLibrary(id) {
             currentLibrary = id;
             currentStudyIndex = 0;
             document.getElementById('activeLibrarySelect').value = id;
-            localStorage.setItem('badboys_currentLibrary', id);
             
             if (id !== 'all' && id !== '') {
                 document.getElementById('studyMode').style.display = 'block';
@@ -1396,6 +1311,8 @@
             } else {
                 document.getElementById('studyMode').style.display = 'none';
             }
+            
+            saveData();
         }
 
         function updateStudyMode() {
@@ -1436,6 +1353,7 @@
                 document.getElementById('studyProgress').textContent = 
                     `${currentStudyIndex + 1}/${studyCards.length}`;
                 
+                // Actualizar mini flashcards
                 document.querySelectorAll('.mini-flashcard').forEach((el, index) => {
                     if (index === currentStudyIndex) {
                         el.classList.add('active');
@@ -1500,7 +1418,7 @@
             document.getElementById('nextButton').disabled = currentStudyIndex === studyCards.length - 1;
         }
 
-        // ============ FUNCIÓN DE ACTUALIZACIÓN UI ============
+        // Actualizar toda la UI
         function updateUI() {
             // Actualizar selects de bibliotecas
             const selects = ['librarySelect', 'activeLibrarySelect', 'csvLibrarySelect', 'txtLibrarySelect', 'wordLibrarySelect', 'pasteLibrarySelect'];
@@ -1552,19 +1470,8 @@
             }
         }
 
-        // ============ ESCUCHAR CAMBIOS EN TIEMPO REAL ============
-        db.collection('libraries').onSnapshot(() => {
-            console.log('Cambios detectados en bibliotecas, recargando...');
-            loadData();
-        });
-
-        db.collection('flashcards').onSnapshot(() => {
-            console.log('Cambios detectados en flashcards, recargando...');
-            loadData();
-        });
-
-        // ============ INICIALIZAR ============
-        loadData();
+        // Inicializar
+        updateUI();
     </script>
 </body>
 </html>
