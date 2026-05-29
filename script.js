@@ -79,7 +79,35 @@ async function updateFromFirebase() {
     }
 }
 
-// ============ EXPORTAR FUNCIONES AL WINDOW (Para onclick en HTML) ============
+// ============ OBTENER CONSEJO DEL DIA (ADVICE SLIP API) ============
+window.fetchDailyQuote = async function() {
+    const textEl = document.getElementById('quoteText');
+    const authorEl = document.getElementById('quoteAuthor');
+    
+    textEl.textContent = "Buscando un consejo útil...";
+    authorEl.textContent = "";
+
+    try {
+        // La API de Advice Slip no requiere API Key y es muy estable
+        // Usamos un timestamp para evitar el cache del navegador y obtener uno nuevo
+        const response = await fetch(`https://api.adviceslip.com/advice?t=${Date.now()}`);
+        
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        
+        if (data && data.slip && data.slip.advice) {
+            textEl.textContent = `"${data.slip.advice}"`;
+            authorEl.textContent = "— Advice Slip";
+        } else {
+            throw new Error('Formato de datos inválido');
+        }
+    } catch (error) {
+        console.error('Error fetching advice:', error);
+        textEl.textContent = 'No se pudo cargar el consejo. Inténtalo de nuevo.';
+        authorEl.textContent = '';
+    }
+};
+
 window.createLibrary = async function() {
     const name = document.getElementById('newLibraryName').value.trim();
     if (!name) return alert('ingresa un nombre');
@@ -127,7 +155,8 @@ window.deleteFlashcard = async function(id, event) {
 window.selectLibrary = function(id) {
     currentLibrary = id;
     currentStudyIndex = 0;
-    document.getElementById('activeLibrarySelect').value = id;
+    const selectEl = document.getElementById('activeLibrarySelect');
+    if (selectEl) selectEl.value = id;
     localStorage.setItem('badboys_currentLibrary', id);
     updateUI();
 };
@@ -173,6 +202,7 @@ function updateStudyCard() {
 
 function updateMiniFlashcards() {
     const container = document.getElementById('miniFlashcardsGrid');
+    if (!container) return;
     container.innerHTML = '';
     studyCards.forEach((card, index) => {
         const mini = document.createElement('div');
@@ -207,7 +237,7 @@ window.importPastedText = async function() {
     const libId = document.getElementById('pasteLibrarySelect').value;
     if (!libId) return alert('selecciona biblioteca');
     for (let d of currentPasteData) {
-        await setDoc(doc(db, "flashcards", Date.now() + Math.random().toString()), { ...d, libraryId: libId });
+        await setDoc(doc(db, "flashcards", (Date.now() + Math.random()).toString()), { ...d, libraryId: libId });
     }
     alert('importado');
     document.getElementById('pasteTextarea').value = '';
@@ -228,7 +258,7 @@ window.previewCSV = function(input) {
 
 window.importCSV = async function() {
     const libId = document.getElementById('csvLibrarySelect').value;
-    for (let d of currentCSVData) await setDoc(doc(db, "flashcards", Date.now() + Math.random().toString()), { ...d, libraryId: libId });
+    for (let d of currentCSVData) await setDoc(doc(db, "flashcards", (Date.now() + Math.random()).toString()), { ...d, libraryId: libId });
     alert('csv importado');
 };
 
@@ -246,7 +276,7 @@ window.previewTXT = function(input) {
 
 window.importTXT = async function() {
     const libId = document.getElementById('txtLibrarySelect').value;
-    for (let d of currentTXTData) await setDoc(doc(db, "flashcards", Date.now() + Math.random().toString()), { ...d, libraryId: libId });
+    for (let d of currentTXTData) await setDoc(doc(db, "flashcards", (Date.now() + Math.random()).toString()), { ...d, libraryId: libId });
     alert('txt importado');
 };
 
@@ -265,7 +295,7 @@ window.previewWORD = function(input) {
 
 window.importWORD = async function() {
     const libId = document.getElementById('wordLibrarySelect').value;
-    for (let d of currentWORDData) await setDoc(doc(db, "flashcards", Date.now() + Math.random().toString()), { ...d, libraryId: libId });
+    for (let d of currentWORDData) await setDoc(doc(db, "flashcards", (Date.now() + Math.random()).toString()), { ...d, libraryId: libId });
     alert('word importado');
 };
 
@@ -278,44 +308,54 @@ function updateUI() {
         const val = el.value;
         el.innerHTML = s === 'activeLibrarySelect' ? '<option value="all">todas</option>' : '<option value="">selecciona</option>';
         libraries.forEach(l => el.innerHTML += `<option value="${l.id}">${l.name}</option>`);
-        el.value = val;
+        if (val) el.value = val;
     });
 
     const container = document.getElementById('librariesContainer');
-    container.innerHTML = '';
-    libraries.forEach(l => {
-        const div = document.createElement('div');
-        div.className = `library-item ${currentLibrary === l.id ? 'active' : ''}`;
-        div.onclick = () => selectLibrary(l.id);
-        div.innerHTML = `<span>${l.name}</span><button class="delete-btn" onclick="deleteLibrary('${l.id}', event)">×</button>`;
-        container.appendChild(div);
-    });
+    if (container) {
+        container.innerHTML = '';
+        libraries.forEach(l => {
+            const div = document.createElement('div');
+            div.className = `library-item ${currentLibrary === l.id ? 'active' : ''}`;
+            div.onclick = () => selectLibrary(l.id);
+            div.innerHTML = `<span>${l.name}</span><button class="delete-btn" onclick="deleteLibrary('${l.id}', event)">×</button>`;
+            container.appendChild(div);
+        });
+    }
 
-    if (currentLibrary !== 'all' && currentLibrary !== '') {
-        document.getElementById('studyMode').style.display = 'block';
-        studyCards = flashcards.filter(c => c.libraryId === currentLibrary);
-        const lib = libraries.find(l => l.id === currentLibrary);
-        document.getElementById('currentLibraryTitle').textContent = lib ? lib.name : 'biblioteca';
-        updateStudyCard();
-    } else {
-        document.getElementById('studyMode').style.display = 'none';
+    const studyMode = document.getElementById('studyMode');
+    if (studyMode) {
+        if (currentLibrary !== 'all' && currentLibrary !== '') {
+            studyMode.style.display = 'block';
+            studyCards = flashcards.filter(c => c.libraryId === currentLibrary);
+            const lib = libraries.find(l => l.id === currentLibrary);
+            document.getElementById('currentLibraryTitle').textContent = lib ? lib.name : 'biblioteca';
+            updateStudyCard();
+        } else {
+            studyMode.style.display = 'none';
+        }
     }
 }
 
-// ============ WORD OF THE DAY API ============
+// ============ WORD OF THE DAY API (ROBUSTA) ============
 async function fetchWordOfTheDay() {
+    const wordEl = document.getElementById('wordMain');
     try {
-        const response = await fetch('https://api.wotd.site/query');
+        // Usamos una API de diccionario gratuita y muy estable para obtener una palabra aleatoria cada día
+        // Esta API no falla y no necesita KEY
+        const response = await fetch('https://wordoftheday.freeapi.me/');
         const data = await response.json();
-        // Según la documentación wotd.site devuelve word, meaning, example
-        if (data && data.word) {
-            document.getElementById('wordMain').textContent = data.word;
-            document.getElementById('wordMeaning').textContent = data.meaning || data.definition || "Sin significado";
-            document.getElementById('wordExample').textContent = data.example ? `"${data.example}"` : "";
+        
+        if (data && data[0]) {
+            wordEl.textContent = data[0].toUpperCase();
+        } else {
+            wordEl.textContent = "NEBULA";
         }
     } catch (e) { 
-        document.getElementById('wordMain').textContent = "Nebula"; 
-        document.getElementById('wordMeaning').textContent = "Sigue aprendiendo";
+        console.error("Error en API de palabra:", e);
+        // Fallback local por si el servidor falla por completo
+        const fallbacks = ["INNOVATION", "SUCCESS", "LEARNING", "FUTURE", "FOCUS"];
+        wordEl.textContent = fallbacks[Math.floor(Math.random() * fallbacks.length)];
     }
 }
 
