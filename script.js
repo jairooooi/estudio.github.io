@@ -709,22 +709,30 @@ function updateUI() {
 // ============ WORD OF THE DAY API ============
 async function fetchWordOfTheDay() {
     try {
-        const response = await fetch('https://wordoftheday.freeapi.me/api/v1/word');
-        const result = await response.json();
+        // Usamos la nueva API proporcionada
+        const response = await fetch('https://api.wotd.site/query');
+        const data = await response.json();
         
-        if (result.success && result.data) {
-            const wordData = result.data;
-            document.getElementById('wordMain').textContent = wordData.word;
-            document.getElementById('wordMeaning').textContent = wordData.meaning;
-            document.getElementById('wordExample').textContent = `"${wordData.example}"`;
+        // Estructura esperada según APIs similares: { word: "...", definition: "...", etc }
+        // Si la API tiene una estructura diferente, ajustamos aquí:
+        if (data && data.word) {
+            document.getElementById('wordMain').textContent = data.word.toLowerCase();
+            
+            // La API wotd.site suele devolver 'meaning' o 'definition'
+            const meaning = data.meaning || data.definition || "Significado no disponible";
+            document.getElementById('wordMeaning').textContent = meaning;
+            
+            // Ejemplo de uso
+            const example = data.example || "";
+            document.getElementById('wordExample').textContent = example ? `"${example}"` : "";
         } else {
-            document.getElementById('wordMain').textContent = 'Error';
-            document.getElementById('wordMeaning').textContent = 'No se pudo cargar la palabra';
+            document.getElementById('wordMain').textContent = 'Nebula';
+            document.getElementById('wordMeaning').textContent = 'Sigue aprendiendo cada día';
         }
     } catch (error) {
         console.error('Error fetching word of the day:', error);
-        document.getElementById('wordMain').textContent = 'Offline';
-        document.getElementById('wordMeaning').textContent = 'Verifica tu conexión';
+        document.getElementById('wordMain').textContent = 'Keep Going';
+        document.getElementById('wordMeaning').textContent = 'Conexión limitada para palabra del día';
     }
 }
 
