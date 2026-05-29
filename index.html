@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEBULA FLASH - Sistema Profesional de Flashcards</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Estilos Externos -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Librerías Externas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>NEBULA FLASH</h1>
+        <div style="text-align: center; margin-bottom: 30px;">
+            <span class="badge">sistema profesional de flashcards</span>
+            <div id="syncStatus" class="sync-status">conectando...</div>
+        </div>
+
+        <!-- SECCIÓN: PALABRA DEL DÍA -->
+        <div class="word-of-the-day-section">
+            <div class="word-title">✦ palabra del día ✦</div>
+            <div id="wordContainer" class="word-content">
+                <div id="wordMain" class="word-main">cargando...</div>
+                <div id="wordMeaning" class="word-meaning">buscando significado...</div>
+                <div id="wordExample" class="word-example"></div>
+            </div>
+        </div>
+
+        <!-- Sección de carga masiva -->
+        <div class="batch-upload-section">
+            <div class="upload-title">
+                <span>carga masiva</span>
+                <span>pega texto o sube archivos</span>
+            </div>
+            
+            <!-- ÁREA DE PEGADO DIRECTO -->
+            <div class="paste-area">
+                <h4>pega tus flashcards aquí</h4>
+                <div class="format-example">
+                    <strong>formatos aceptados:</strong><br>
+                    • pregunta | respuesta<br>
+                    • pregunta → respuesta<br>
+                    • pregunta: respuesta<br>
+                    • "pregunta","respuesta"<br><br>
+                    <strong>ejemplo:</strong><br>
+                    ¿SHA-256 es cifrado o hashing? | es hashing, porque es una función unidireccional
+                </div>
+                <textarea id="pasteTextarea" class="paste-textarea" placeholder="pega aquí tus flashcards (una por línea)"></textarea>
+                <select id="pasteLibrarySelect" class="library-selector" style="margin: 10px 0; width: 100%;">
+                    <option value="">selecciona biblioteca destino</option>
+                </select>
+                <div style="display: flex; gap: 10px;">
+                    <button class="neon-button" onclick="previewPastedText()">vista previa</button>
+                    <button class="neon-button" onclick="importPastedText()" id="importPasteBtn" disabled>importar</button>
+                </div>
+                <div id="pastePreview" class="preview-area" style="display: none; margin-top: 20px;"></div>
+            </div>
+
+            <div class="upload-grid">
+                <!-- Tarjeta para CSV -->
+                <div class="upload-card">
+                    <h4>archivo csv</h4>
+                    <div class="format-info">
+                        <strong>formato:</strong> término,definición<br>
+                        <strong>ejemplo:</strong> "parís","capital de francia"
+                    </div>
+                    <div class="file-input-container">
+                        <input type="file" id="csvFile" class="file-input" accept=".csv" onchange="previewCSV(this)">
+                        <label for="csvFile" class="file-label">📎 seleccionar csv</label>
+                    </div>
+                    <select id="csvLibrarySelect" class="library-selector" style="margin: 10px 0;">
+                        <option value="">selecciona biblioteca destino</option>
+                    </select>
+                    <button class="neon-button small" onclick="importCSV()" id="importCSVBtn" disabled>importar csv</button>
+                    <div id="csvPreview" class="preview-area" style="display: none;"></div>
+                </div>
+
+                <!-- Tarjeta para TXT -->
+                <div class="upload-card">
+                    <h4>archivo txt</h4>
+                    <div class="format-info">
+                        <strong>formato:</strong> término | definición<br>
+                        <strong>ejemplo:</strong> parís | capital de francia
+                    </div>
+                    <div class="file-input-container">
+                        <input type="file" id="txtFile" class="file-input" accept=".txt" onchange="previewTXT(this)">
+                        <label for="txtFile" class="file-label">📎 seleccionar txt</label>
+                    </div>
+                    <select id="txtLibrarySelect" class="library-selector" style="margin: 10px 0;">
+                        <option value="">selecciona biblioteca destino</option>
+                    </select>
+                    <button class="neon-button small" onclick="importTXT()" id="importTXTBtn" disabled>importar txt</button>
+                    <div id="txtPreview" class="preview-area" style="display: none;"></div>
+                </div>
+
+                <!-- Tarjeta para WORD -->
+                <div class="upload-card">
+                    <h4>archivo word</h4>
+                    <div class="format-info">
+                        <strong>formato:</strong> tabla de 2 columnas<br>
+                        <strong>ejemplo:</strong> tabla en word con término y definición
+                    </div>
+                    <div class="file-input-container">
+                        <input type="file" id="wordFile" class="file-input" accept=".doc,.docx" onchange="previewWORD(this)">
+                        <label for="wordFile" class="file-label">📎 seleccionar word</label>
+                    </div>
+                    <select id="wordLibrarySelect" class="library-selector" style="margin: 10px 0;">
+                        <option value="">selecciona biblioteca destino</option>
+                    </select>
+                    <button class="neon-button small" onclick="importWORD()" id="importWORDBtn" disabled>importar word</button>
+                    <div id="wordPreview" class="preview-area" style="display: none;"></div>
+                </div>
+            </div>
+
+            <!-- Área de mensajes -->
+            <div id="uploadMessage" class="success-message" style="display: none;"></div>
+        </div>
+
+        <!-- Sección para agregar flashcards manualmente -->
+        <div class="creator-section">
+            <div class="input-group">
+                <h3>nueva biblioteca</h3>
+                <input type="text" id="newLibraryName" placeholder="nombre de la biblioteca">
+                <button class="neon-button" onclick="createLibrary()">crear biblioteca</button>
+            </div>
+            
+            <div class="input-group">
+                <h3>nueva flashcard</h3>
+                <select id="librarySelect">
+                    <option value="">selecciona una biblioteca</option>
+                </select>
+                <input type="text" id="termInput" placeholder="término / pregunta">
+                <textarea id="definitionInput" placeholder="definición / respuesta"></textarea>
+                <button class="neon-button" onclick="addFlashcard()">agregar flashcard</button>
+            </div>
+        </div>
+
+        <!-- Sección de bibliotecas -->
+        <div class="libraries-section">
+            <div class="library-header">
+                <h3>bibliotecas</h3>
+                <select id="activeLibrarySelect" class="library-selector" onchange="selectLibrary(this.value)">
+                    <option value="">todas las bibliotecas</option>
+                </select>
+            </div>
+            <div id="librariesContainer" class="libraries-grid"></div>
+        </div>
+
+        <!-- MODO ESTUDIO -->
+        <div id="studyMode" class="study-mode" style="display: none;">
+            <div class="study-header">
+                <h2 id="currentLibraryTitle" class="study-title">biblioteca</h2>
+                <div class="study-controls">
+                    <span id="studyProgress" class="study-progress">0/0</span>
+                    <button class="neon-button small" onclick="shuffleCurrentLibrary()">mezclar</button>
+                </div>
+            </div>
+
+            <div class="study-card-container">
+                <div id="studyCard" class="study-card" onclick="flipStudyCard()">
+                    <div class="study-card-front">
+                        <div id="studyTerm" class="study-term">término</div>
+                        <div class="study-hint">click para ver respuesta</div>
+                    </div>
+                    <div class="study-card-back">
+                        <div id="studyDefinition" class="study-definition">definición</div>
+                        <div class="study-hint">click para ver pregunta</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="study-navigation">
+                <button id="prevButton" class="nav-button" onclick="previousCard()" disabled>←</button>
+                <button id="nextButton" class="nav-button" onclick="previousCard()" disabled>→</button>
+            </div>
+
+            <div id="miniFlashcardsGrid" class="mini-flashcards-grid"></div>
+        </div>
+    </div>
+
+    <!-- Scripts Externos -->
+    <script type="module" src="script.js"></script>
+</body>
+</html>
