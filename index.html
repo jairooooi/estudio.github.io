@@ -11,6 +11,23 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
 </head>
 <body>
+    <div id="hamburgerMenu" class="hamburger-icon" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <nav id="sideMenu" class="side-menu">
+        <div class="menu-header">MENU_NAV</div>
+        <button onclick="navigateAndClose('wordSection')">PALABRA DEL DIA</button>
+        <button onclick="navigateAndClose('uploadSection')">CARGAR FLASHCARDS</button>
+        <button onclick="navigateAndClose('librariesSection')">BIBLIOTECAS</button>
+        <button onclick="navigateAndClose('studyMode')">ESTUDIO</button>
+        <button onclick="navigateAndClose('quoteSection')">CONSEJO DEL DIA</button>
+    </nav>
+
+    <div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
+
     <div class="container">
         <h1>NEBULA FLASH</h1>
         <div style="text-align: center;">
@@ -19,7 +36,7 @@
         </div>
 
         <!-- SECCIÓN: PALABRA DEL DÍA - SIMPLIFICADA -->
-        <div class="word-of-the-day-section">
+        <div id="wordSection" class="word-of-the-day-section">
             <div class="word-title">PALABRA DEL DIA</div>
             <div id="wordMain" class="word-main">CARGANDO...</div>
         </div>
@@ -42,7 +59,7 @@
             </div>
         </div>
 
-        <div class="batch-upload-section" style="margin-bottom: 60px;">
+        <div id="uploadSection" class="batch-upload-section" style="margin-bottom: 60px;">
             <h3 style="text-transform: uppercase; font-weight: 900; margin-bottom: 20px;">Massive_Data_Injection</h3>
             
             <div class="input-group" style="margin-bottom: 20px;">
@@ -91,7 +108,7 @@
             <div id="uploadMessage" class="success-message" style="display: none; margin-top: 20px; font-weight: 900; text-transform: uppercase;"></div>
         </div>
 
-        <div class="libraries-section">
+        <div id="librariesSection" class="libraries-section">
             <h3 style="text-transform: uppercase; font-weight: 900; margin-bottom: 20px;">Active_Mainframes</h3>
             <select id="activeLibrarySelect" style="margin-bottom: 30px;" onchange="selectLibrary(this.value)">
                 <option value="">ALL_MODULES</option>
@@ -122,14 +139,17 @@
 
             <div class="study-navigation">
                 <button id="prevButton" class="nav-button" onclick="previousCard()" disabled>←</button>
-                <button id="nextButton" class="nav-button" onclick="previousCard()" disabled>→</button>
+                <button id="nextButton" class="nav-button" onclick="nextCard()" disabled>→</button>
             </div>
 
-            <div id="miniFlashcardsGrid" class="mini-flashcards-grid" style="margin-top: 60px;"></div>
+            <div style="margin-top: 60px; text-align: center;">
+                <button class="neon-button" onclick="toggleMiniFlashcards()">MOSTRAR/OCULTAR LISTA DE CARTAS</button>
+            </div>
+            <div id="miniFlashcardsGrid" class="mini-flashcards-grid" style="margin-top: 20px; display: none;"></div>
         </div>
 
         <!-- SECCIÓN: CONSEJO DEL DIA (ZENQUOTES) -->
-        <div class="quote-section" style="margin-top: 80px; border-top: 4px solid #1F1F1F; padding-top: 60px; text-align: center;">
+        <div id="quoteSection" class="quote-section" style="margin-top: 80px; border-top: 4px solid #1F1F1F; padding-top: 60px; text-align: center;">
             <h3 style="text-transform: uppercase; font-weight: 900; color: #1F1F1F; margin-bottom: 30px; font-size: 2rem;">CONSEJO DEL DIA</h3>
             <div id="quoteContainer" style="background: #1F1F1F; color: white; padding: 40px; border-radius: 20px; border-bottom: 10px solid #B91C1C; margin-bottom: 30px; min-height: 150px; display: flex; flex-direction: column; justify-content: center;">
                 <p id="quoteText" style="font-size: 1.6rem; font-style: italic; line-height: 1.6; margin-bottom: 15px;">"Haz clic en el botón para recibir un consejo..."</p>

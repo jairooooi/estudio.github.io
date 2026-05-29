@@ -188,6 +188,33 @@ window.previousCard = function() {
     }
 };
 
+window.scrollToSection = function(id) {
+    const el = document.getElementById(id);
+    if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+};
+
+window.toggleMenu = function() {
+    document.getElementById('sideMenu').classList.toggle('open');
+    document.getElementById('hamburgerMenu').classList.toggle('open');
+    document.getElementById('menuOverlay').classList.toggle('open');
+};
+
+window.navigateAndClose = function(id) {
+    window.scrollToSection(id);
+    window.toggleMenu();
+};
+
+window.toggleMiniFlashcards = function() {
+    const grid = document.getElementById('miniFlashcardsGrid');
+    if (grid.style.display === 'none') {
+        grid.style.display = 'grid';
+    } else {
+        grid.style.display = 'none';
+    }
+};
+
 function updateStudyCard() {
     if (studyCards.length > 0) {
         const card = studyCards[currentStudyIndex];
