@@ -8,11 +8,8 @@ const firebaseConfig = {
     appId: "1:296063325492:web:e63b0f9bef22a47123c161"
 };
 
-// Inicializar Firebase
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
-// ============ VARIABLES GLOBALES ============
+// Inicializar variables globales
+let db;
 let libraries = [];
 let flashcards = [];
 let currentLibrary = localStorage.getItem('badboys_currentLibrary') || 'all';
@@ -23,9 +20,55 @@ let currentTXTData = [];
 let currentWORDData = [];
 let currentPasteData = [];
 
+// ============ INICIALIZACIÓN DE FIREBASE ============
+function initFirebase() {
+    try {
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        db = firebase.firestore();
+        console.log('Firebase inicializado correctamente');
+        
+        // Configurar escuchas en tiempo real
+        setupListeners();
+        
+        // Cargar datos iniciales
+        updateFromFirebase();
+    } catch (error) {
+        console.error("Error al inicializar Firebase:", error);
+        const statusEl = document.getElementById('syncStatus');
+        if (statusEl) {
+            statusEl.textContent = 'error de inicio: ' + error.message;
+            statusEl.className = 'sync-status';
+            statusEl.style.borderColor = '#ff4444';
+            statusEl.style.color = '#ff4444';
+        }
+    }
+}
+
+// ============ ESCUCHAR CAMBIOS EN TIEMPO REAL ============
+function setupListeners() {
+    // Escuchar cambios en bibliotecas
+    db.collection('libraries').onSnapshot((snapshot) => {
+        console.log('Cambios detectados en bibliotecas!');
+        updateFromFirebase();
+    }, (error) => {
+        console.error("Error en snapshot de bibliotecas:", error);
+    });
+
+    // Escuchar cambios en flashcards
+    db.collection('flashcards').onSnapshot((snapshot) => {
+        console.log('Cambios detectados en flashcards!');
+        updateFromFirebase();
+    }, (error) => {
+        console.error("Error en snapshot de flashcards:", error);
+    });
+}
+
 // ============ FUNCIÓN PARA ACTUALIZAR UI DESDE FIREBASE ============
 function updateFromFirebase() {
-    console.log('Actualizando desde Firebase...');
+    console.log('Actualizando datos...');
+    const statusEl = document.getElementById('syncStatus');
     
     // Cargar bibliotecas
     db.collection('libraries').get().then((libsSnapshot) => {
@@ -45,8 +88,10 @@ function updateFromFirebase() {
             localStorage.setItem('badboys_libraries', JSON.stringify(libraries));
             localStorage.setItem('badboys_flashcards', JSON.stringify(flashcards));
             
-            document.getElementById('syncStatus').textContent = 'conectado';
-            document.getElementById('syncStatus').className = 'sync-status connected';
+            if (statusEl) {
+                statusEl.textContent = 'conectado';
+                statusEl.className = 'sync-status connected';
+            }
             
             updateUI();
         }).catch((error) => {
@@ -54,7 +99,10 @@ function updateFromFirebase() {
         });
     }).catch((error) => {
         console.error("Error cargando bibliotecas:", error);
-        document.getElementById('syncStatus').textContent = 'error de conexión';
+        if (statusEl) {
+            statusEl.textContent = 'error de conexión: verifica internet';
+            statusEl.className = 'sync-status';
+        }
         
         // Fallback a localStorage
         libraries = JSON.parse(localStorage.getItem('badboys_libraries')) || [];
@@ -62,23 +110,6 @@ function updateFromFirebase() {
         updateUI();
     });
 }
-
-// ============ ESCUCHAR CAMBIOS EN TIEMPO REAL ============
-// Escuchar cambios en bibliotecas
-db.collection('libraries').onSnapshot((snapshot) => {
-    console.log('Cambios detectados en bibliotecas!');
-    updateFromFirebase();
-}, (error) => {
-    console.error("Error en snapshot de bibliotecas:", error);
-});
-
-// Escuchar cambios en flashcards
-db.collection('flashcards').onSnapshot((snapshot) => {
-    console.log('Cambios detectados en flashcards!');
-    updateFromFirebase();
-}, (error) => {
-    console.error("Error en snapshot de flashcards:", error);
-});
 
 // ============ FUNCIONES PRINCIPALES ============
 window.createLibrary = async function() {
