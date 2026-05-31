@@ -88,13 +88,9 @@ window.fetchDailyQuote = async function() {
     authorEl.textContent = "";
 
     try {
-        // La API de Advice Slip no requiere API Key y es muy estable
-        // Usamos un timestamp para evitar el cache del navegador y obtener uno nuevo
         const response = await fetch(`https://api.adviceslip.com/advice?t=${Date.now()}`);
-        
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
-        
         if (data && data.slip && data.slip.advice) {
             textEl.textContent = `"${data.slip.advice}"`;
             authorEl.textContent = "— Advice Slip";
@@ -161,21 +157,16 @@ window.selectLibrary = function(id) {
     updateUI();
 };
 
-window.shuffleCurrentLibrary = function() {
-    studyCards = studyCards.sort(() => Math.random() - 0.5);
-    currentStudyIndex = 0;
-    document.getElementById('studyCard').classList.remove('flipped');
-    updateStudyCard();
-};
-
 window.flipStudyCard = function() {
-    document.getElementById('studyCard').classList.toggle('flipped');
+    const card = document.getElementById('studyCard');
+    if (card) card.classList.toggle('flipped');
 };
 
 window.nextCard = function() {
     if (currentStudyIndex < studyCards.length - 1) {
         currentStudyIndex++;
-        document.getElementById('studyCard').classList.remove('flipped');
+        const card = document.getElementById('studyCard');
+        if (card) card.classList.remove('flipped');
         updateStudyCard();
     }
 };
@@ -183,7 +174,8 @@ window.nextCard = function() {
 window.previousCard = function() {
     if (currentStudyIndex > 0) {
         currentStudyIndex--;
-        document.getElementById('studyCard').classList.remove('flipped');
+        const card = document.getElementById('studyCard');
+        if (card) card.classList.remove('flipped');
         updateStudyCard();
     }
 };
@@ -208,10 +200,8 @@ window.navigateAndClose = function(id) {
 
 window.toggleMiniFlashcards = function() {
     const grid = document.getElementById('miniFlashcardsGrid');
-    if (grid.style.display === 'none') {
-        grid.style.display = 'grid';
-    } else {
-        grid.style.display = 'none';
+    if (grid) {
+        grid.style.display = (grid.style.display === 'none') ? 'grid' : 'none';
     }
 };
 
@@ -354,7 +344,13 @@ function updateUI() {
     if (studyMode) {
         if (currentLibrary !== 'all' && currentLibrary !== '') {
             studyMode.style.display = 'block';
-            studyCards = flashcards.filter(c => c.libraryId === currentLibrary);
+            const filteredCards = flashcards.filter(c => c.libraryId === currentLibrary);
+            
+            if (studyCards.length === 0 || studyCards[0]?.libraryId !== currentLibrary || studyCards.length !== filteredCards.length) {
+                studyCards = filteredCards;
+                currentStudyIndex = 0;
+            }
+
             const lib = libraries.find(l => l.id === currentLibrary);
             document.getElementById('currentLibraryTitle').textContent = lib ? lib.name : 'biblioteca';
             updateStudyCard();
@@ -367,24 +363,58 @@ function updateUI() {
 // ============ WORD OF THE DAY API (ROBUSTA) ============
 async function fetchWordOfTheDay() {
     const wordEl = document.getElementById('wordMain');
+    const meaningEl = document.getElementById('wordMeaning');
+    const exampleEl = document.getElementById('wordExample');
+    
     try {
-        // Usamos una API de diccionario gratuita y muy estable para obtener una palabra aleatoria cada día
-        // Esta API no falla y no necesita KEY
-        const response = await fetch('https://wordoftheday.freeapi.me/');
-        const data = await response.json();
+        const wordResponse = await fetch('https://words.dev-apis.com/word-of-the-day');
+        const wordData = await wordResponse.json();
+        const word = wordData.word;
         
-        if (data && data[0]) {
-            wordEl.textContent = data[0].toUpperCase();
-        } else {
-            wordEl.textContent = "NEBULA";
+        if (word) {
+            wordEl.textContent = word.toUpperCase();
+            const dictResponse = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
+            const dictData = await dictResponse.json();
+            
+            if (dictData && dictData[0]) {
+                const entry = dictData[0];
+                const definition = entry.meanings[0].definitions[0].definition;
+                const example = entry.meanings[0].definitions[0].example || "No example available for this word.";
+                
+                meaningEl.textContent = definition;
+                exampleEl.textContent = `"${example}"`;
+            } else {
+                meaningEl.textContent = "Definición no encontrada.";
+                exampleEl.textContent = "Ejemplo no disponible.";
+            }
         }
     } catch (e) { 
         console.error("Error en API de palabra:", e);
-        // Fallback local por si el servidor falla por completo
-        const fallbacks = ["INNOVATION", "SUCCESS", "LEARNING", "FUTURE", "FOCUS"];
-        wordEl.textContent = fallbacks[Math.floor(Math.random() * fallbacks.length)];
+        wordEl.textContent = "NEBULA";
+        meaningEl.textContent = "Sistema de aprendizaje cuántico.";
+        exampleEl.textContent = "Focus on your goals to reach the stars.";
     }
 }
+
+// Fisher-Yates Shuffle para mezclar aleatoriamente
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+window.shuffleCurrentLibrary = function() {
+    if (studyCards.length > 0) {
+        studyCards = shuffleArray([...studyCards]);
+        currentStudyIndex = 0;
+        const card = document.getElementById('studyCard');
+        if (card) card.classList.remove('flipped');
+        updateStudyCard();
+        alert('¡Cartas mezcladas!');
+    }
+};
 
 // INICIO
 document.addEventListener('DOMContentLoaded', () => {
